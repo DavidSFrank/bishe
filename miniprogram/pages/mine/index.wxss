@@ -1,0 +1,11 @@
+.mine-page { padding: 20rpx; }
+.user-card { display: flex; align-items: center; }
+.avatar { width: 120rpx; height: 120rpx; border-radius: 50%; margin-right: 24rpx; background: #eee; }
+.nickname { font-size: 32rpx; font-weight: bold; display: block; }
+.phone { font-size: 26rpx; color: #999; margin-top: 8rpx; }
+.login-card { justify-content: center; padding: 60rpx; color: #2196f3; font-size: 32rpx; }
+.menu-list { margin-top: 20rpx; padding: 0; }
+.menu-item { display: flex; justify-content: space-between; align-items: center; padding: 28rpx 24rpx; border-bottom: 1rpx solid #eee; }
+.menu-item:last-child { border-bottom: none; }
+.arrow { color: #ccc; font-size: 36rpx; }
+.logout-btn { margin-top: 60rpx; background: #fff; color: #f44336; border: 1rpx solid #f44336; border-radius: 44rpx; }

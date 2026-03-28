@@ -1,0 +1,65 @@
+<!--pages/index/index.wxml - 首页-->
+<view class="index-page">
+  <!-- 搜索栏 -->
+  <view class="search-bar" bindtap="onSearchTap">
+    <view class="search-input">
+      <text class="search-icon">🔍</text>
+      <text class="search-placeholder">搜索体检套餐</text>
+    </view>
+  </view>
+
+  <!-- 轮播图 -->
+  <swiper class="banner-swiper" indicator-dots autoplay circular>
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <image class="banner-image" src="{{item.image}}" mode="aspectFill" />
+    </swiper-item>
+  </swiper>
+
+  <!-- 分类导航 -->
+  <view class="section">
+    <view class="section-title">体检分类</view>
+    <view class="category-grid">
+      <view 
+        class="category-item" 
+        wx:for="{{categories}}" 
+        wx:key="id"
+        data-id="{{item.id}}"
+        data-name="{{item.name}}"
+        bindtap="onCategoryTap"
+      >
+        <view class="category-icon">{{item.icon || '📋'}}</view>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门套餐 -->
+  <view class="section">
+    <view class="section-title">热门推荐</view>
+    <view class="package-list">
+      <view 
+        class="package-card card" 
+        wx:for="{{hotPackages}}" 
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onPackageTap"
+      >
+        <image class="package-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="package-info">
+          <view class="package-name">{{item.name}}</view>
+          <view class="package-desc">{{item.suitable_for}}</view>
+          <view class="package-bottom">
+            <text class="price">{{item.price}}</text>
+            <text class="sales">已售 {{item.sales_count}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!loading && hotPackages.length === 0}}">
+    <view class="empty-icon">📭</view>
+    <text>暂无体检套餐</text>
+  </view>
+</view>

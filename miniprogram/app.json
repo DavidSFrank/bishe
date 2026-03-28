@@ -1,0 +1,59 @@
+{
+    "pages": [
+        "pages/index/index",
+        "pages/packages/list",
+        "pages/packages/detail",
+        "pages/appointment/create",
+        "pages/appointment/list",
+        "pages/report/list",
+        "pages/report/detail",
+        "pages/articles/list",
+        "pages/articles/detail",
+        "pages/consultation/list",
+        "pages/consultation/create",
+        "pages/favorites/list",
+        "pages/profile/edit",
+        "pages/mine/index"
+    ],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#2196F3",
+        "navigationBarTitleText": "医院体检预约",
+        "navigationBarTextStyle": "white"
+    },
+    "tabBar": {
+        "color": "#999999",
+        "selectedColor": "#2196F3",
+        "backgroundColor": "#ffffff",
+        "borderStyle": "black",
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "text": "首页",
+                "iconPath": "images/tab-home.png",
+                "selectedIconPath": "images/tab-home-active.png"
+            },
+            {
+                "pagePath": "pages/packages/list",
+                "text": "套餐",
+                "iconPath": "images/tab-package.png",
+                "selectedIconPath": "images/tab-package-active.png"
+            },
+            {
+                "pagePath": "pages/appointment/list",
+                "text": "预约",
+                "iconPath": "images/tab-appointment.png",
+                "selectedIconPath": "images/tab-appointment-active.png"
+            },
+            {
+                "pagePath": "pages/mine/index",
+                "text": "我的",
+                "iconPath": "images/tab-mine.png",
+                "selectedIconPath": "images/tab-mine-active.png"
+            }
+        ]
+    },
+    "style": "v2",
+    "sitemapLocation": "sitemap.json",
+    "lazyCodeLoading": "requiredComponents"
+}

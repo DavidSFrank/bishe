@@ -1,0 +1,10 @@
+<view class="favorites-page">
+  <view class="card" wx:for="{{favorites}}" wx:key="id" bindtap="onPackageTap" data-id="{{item.package_info.id}}">
+    <image class="cover" src="{{item.package_info.image || '/images/default-cover.png'}}" mode="aspectFill"/>
+    <view class="content">
+      <view class="title">{{item.package_info.name}}</view>
+      <view class="price">¥{{item.package_info.price}}</view>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{!loading && favorites.length === 0}}"><text>暂无收藏</text></view>
+</view>

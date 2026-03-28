@@ -1,0 +1,15 @@
+<view class="detail-page" wx:if="{{package}}">
+  <image class="cover" src="{{package.image}}" mode="aspectFill"/>
+  <view class="info card">
+    <view class="name">{{package.name}}</view>
+    <view class="price-row"><text class="price">{{package.price}}</text><text class="original" wx:if="{{package.original_price}}">¥{{package.original_price}}</text></view>
+    <view class="tags"><text class="tag tag-primary" wx:if="{{package.is_hot}}">热门</text></view>
+  </view>
+  <view class="section card"><view class="section-title">适用人群</view><text>{{package.suitable_for || '所有人群'}}</text></view>
+  <view class="section card"><view class="section-title">套餐详情</view><text>{{package.description}}</text></view>
+  <view class="section card" wx:if="{{package.notice}}"><view class="section-title">注意事项</view><text>{{package.notice}}</text></view>
+  <view class="bottom-bar">
+    <button class="btn-secondary" bindtap="onToggleFavorite">{{isFavorite ? '已收藏' : '收藏'}}</button>
+    <button class="btn-primary" bindtap="onAppointment">立即预约</button>
+  </view>
+</view>

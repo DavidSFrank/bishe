@@ -1,0 +1,27 @@
+<view class="profile-page">
+  <view class="card">
+    <view class="field">
+      <text class="label">昵称</text>
+      <input class="input" value="{{form.nickname}}" data-field="nickname" bindinput="onInput" />
+    </view>
+    <view class="field">
+      <text class="label">手机号</text>
+      <input class="input" value="{{form.phone}}" data-field="phone" bindinput="onInput" />
+    </view>
+    <view class="field">
+      <text class="label">真实姓名</text>
+      <input class="input" value="{{form.real_name}}" data-field="real_name" bindinput="onInput" />
+    </view>
+    <view class="field">
+      <text class="label">身份证号</text>
+      <input class="input" value="{{form.id_card}}" data-field="id_card" bindinput="onInput" />
+    </view>
+    <view class="field">
+      <text class="label">性别</text>
+      <picker mode="selector" range="{{genderOptions}}" value="{{form.gender}}" bindchange="onGenderChange">
+        <view class="picker">{{genderOptions[form.gender]}}</view>
+      </picker>
+    </view>
+  </view>
+  <button class="primary-btn" bindtap="onSubmit">保存</button>
+</view>

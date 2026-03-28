@@ -1,0 +1,6 @@
+<view class="detail-page" wx:if="{{report}}">
+  <view class="card"><view class="title">基本信息</view><text>报告日期：{{report.report_date}}</text><text>报告医生：{{report.doctor}}</text></view>
+  <view class="card"><view class="title">检查结果</view><text class="summary">{{report.result_summary || '暂无'}}</text></view>
+  <button class="btn-primary" wx:if="{{report.file_url}}" bindtap="onPreview">查看报告文件</button>
+</view>
+<view class="empty" wx:if="{{!loading && !report}}"><text>报告不存在</text></view>

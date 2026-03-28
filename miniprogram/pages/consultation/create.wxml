@@ -1,0 +1,5 @@
+<view class="create-page">
+  <view class="label">咨询内容</view>
+  <textarea class="textarea" placeholder="请输入咨询内容" value="{{content}}" bindinput="onInput"/>
+  <button class="primary-btn" bindtap="onSubmit">提交</button>
+</view>

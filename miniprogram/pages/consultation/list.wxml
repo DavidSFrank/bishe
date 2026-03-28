@@ -1,0 +1,9 @@
+<view class="consultation-page">
+  <button class="primary-btn" bindtap="onCreate">我要咨询</button>
+  <view class="card" wx:for="{{consultations}}" wx:key="id">
+    <view class="content">{{item.content}}</view>
+    <view class="meta">状态：{{statusMap[item.status]}}</view>
+    <view class="reply" wx:if="{{item.reply}}">回复：{{item.reply}}</view>
+  </view>
+  <view class="empty" wx:if="{{!loading && consultations.length === 0}}"><text>暂无咨询记录</text></view>
+</view>

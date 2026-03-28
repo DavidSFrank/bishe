@@ -1,0 +1,11 @@
+<view class="packages-page">
+  <input class="search-input" placeholder="搜索套餐" bindinput="onSearch" bindconfirm="onSearchConfirm"/>
+  <view class="package-card card" wx:for="{{packages}}" wx:key="id" data-id="{{item.id}}" bindtap="onPackageTap">
+    <image class="package-image" src="{{item.image}}" mode="aspectFill"/>
+    <view class="package-info">
+      <view class="package-name">{{item.name}}</view>
+      <text class="price">{{item.price}}</text>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{!loading && packages.length === 0}}"><text>暂无套餐</text></view>
+</view>

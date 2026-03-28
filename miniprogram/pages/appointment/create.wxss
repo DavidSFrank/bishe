@@ -1,0 +1,8 @@
+.create-page { padding: 20rpx; }
+.package-info { display: flex; justify-content: space-between; align-items: center; }
+.form { margin-top: 20rpx; }
+.form-item { display: flex; align-items: center; padding: 24rpx 0; border-bottom: 1rpx solid #eee; }
+.form-item:last-child { border-bottom: none; }
+.label { width: 140rpx; color: #666; }
+.form-item input, .form-item picker { flex: 1; }
+.submit-btn { margin-top: 40rpx; }

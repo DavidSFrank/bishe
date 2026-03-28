@@ -1,0 +1,8 @@
+<view class="list-page">
+  <view class="card" wx:for="{{appointments}}" wx:key="id" data-id="{{item.id}}" bindtap="onDetail">
+    <view class="header"><text class="name">{{item.package.name}}</text><text class="status status-{{item.status}}">{{statusMap[item.status]}}</text></view>
+    <view class="info"><text>体检人：{{item.name}}</text><text>日期：{{item.appointment_date}} {{item.time_slot}}</text></view>
+    <view class="amount">¥{{item.amount}}</view>
+  </view>
+  <view class="empty" wx:if="{{!loading && appointments.length === 0}}"><text>暂无预约记录</text></view>
+</view>

@@ -1,0 +1,131 @@
+/* pages/index/index.wxss - 首页样式 */
+
+.index-page {
+  padding-bottom: 30rpx;
+}
+
+/* 搜索栏 */
+.search-bar {
+  padding: 20rpx;
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+}
+
+.search-input {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 36rpx;
+  padding: 16rpx 24rpx;
+}
+
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 16rpx;
+}
+
+.search-placeholder {
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* 轮播图 */
+.banner-swiper {
+  height: 320rpx;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 分类 */
+.section {
+  padding: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20rpx;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+  background: #fff;
+  border-radius: 12rpx;
+}
+
+.category-icon {
+  font-size: 48rpx;
+  margin-bottom: 10rpx;
+}
+
+.category-name {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 套餐列表 */
+.package-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.package-card {
+  display: flex;
+  padding: 0;
+  overflow: hidden;
+}
+
+.package-image {
+  width: 200rpx;
+  height: 200rpx;
+  flex-shrink: 0;
+}
+
+.package-info {
+  flex: 1;
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.package-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.package-desc {
+  font-size: 24rpx;
+  color: #999;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.package-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sales {
+  font-size: 22rpx;
+  color: #999;
+}

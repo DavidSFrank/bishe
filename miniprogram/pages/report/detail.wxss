@@ -1,0 +1,5 @@
+.detail-page { padding: 20rpx; }
+.card { margin-bottom: 20rpx; }
+.title { font-weight: bold; margin-bottom: 16rpx; font-size: 30rpx; }
+.card text { display: block; color: #666; margin-bottom: 8rpx; }
+.summary { white-space: pre-wrap; line-height: 1.6; }

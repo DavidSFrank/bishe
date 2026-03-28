@@ -1,0 +1,10 @@
+<view class="articles-page">
+  <view class="card" wx:for="{{articles}}" wx:key="id" bindtap="onDetail" data-id="{{item.id}}">
+    <image class="cover" src="{{item.cover_image || '/images/default-cover.png'}}" mode="aspectFill"/>
+    <view class="content">
+      <view class="title">{{item.title}}</view>
+      <view class="meta">{{item.created_at}}</view>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{!loading && articles.length === 0}}"><text>暂无健康常识</text></view>
+</view>

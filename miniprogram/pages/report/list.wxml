@@ -1,0 +1,7 @@
+<view class="list-page">
+  <view class="card" wx:for="{{reports}}" wx:key="id" data-id="{{item.id}}" bindtap="onDetail">
+    <view class="title">体检报告 - {{item.report_date}}</view>
+    <view class="summary">{{item.result_summary || '点击查看详情'}}</view>
+  </view>
+  <view class="empty" wx:if="{{!loading && reports.length === 0}}"><text>暂无体检报告</text></view>
+</view>
