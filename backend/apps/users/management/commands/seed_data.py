@@ -85,9 +85,14 @@ class Command(BaseCommand):
                 'gender': user.gender,
                 'order_no': timezone.now().strftime('%Y%m%d%H%M%S') + '000001',
                 'amount': pkg1.price,
-                'status': 1
+                'status': 0
             }
         )
+        # Keep one deterministic pending record for admin audit manual testing.
+        if appointment.status != 0 or appointment.reject_reason:
+            appointment.status = 0
+            appointment.reject_reason = ''
+            appointment.save(update_fields=['status', 'reject_reason', 'updated_at'])
 
         Report.objects.get_or_create(
             appointment=appointment,

@@ -1,0 +1,45 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 8rpx;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+}
+
+.stat-item {
+  min-height: 140rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.label {
+  color: #6b7280;
+  font-size: 24rpx;
+}
+
+.value {
+  margin-top: 10rpx;
+  font-size: 44rpx;
+  font-weight: 700;
+}
+
+.warning {
+  color: #f59e0b;
+}
+

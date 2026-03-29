@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="header">
+    <text class="title">套餐管理</text>
+    <view class="actions">
+      <button size="mini" bindtap="goDashboard">控制台</button>
+      <button size="mini" bindtap="goAppointments">预约</button>
+      <button size="mini" bindtap="goLogin">退出</button>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+
+  <block wx:elif="{{list.length}}">
+    <view class="card package-item" wx:for="{{list}}" wx:key="id">
+      <view class="row-top">
+        <text class="name">{{item.name}}</text>
+        <text class="price">{{item.price}}</text>
+      </view>
+      <view class="meta">销量: {{item.sales_count}} | 状态: {{item.is_active ? '上架' : '下架'}}</view>
+      <view class="desc">{{item.description || '暂无描述'}}</view>
+    </view>
+  </block>
+
+  <view wx:else class="empty">暂无套餐数据</view>
+</view>

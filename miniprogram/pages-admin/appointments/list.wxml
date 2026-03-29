@@ -1,0 +1,32 @@
+<view class="container">
+  <view class="header">
+    <text class="title">预约管理</text>
+    <view class="actions">
+      <button size="mini" bindtap="goDashboard">控制台</button>
+      <button size="mini" bindtap="goPackages">套餐</button>
+    </view>
+  </view>
+
+  <picker mode="selector" range="{{statusOptions}}" range-key="label" bindchange="onStatusChange">
+    <view class="filter">筛选状态：{{statusOptions[statusIndex].label}}</view>
+  </picker>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+
+  <block wx:elif="{{list.length}}">
+    <view class="card item" wx:for="{{list}}" wx:key="id">
+      <view class="line"><text>{{item.order_no}}</text><text class="tag">{{statusMap[item.status]}}</text></view>
+      <view class="line"><text>体检人：{{item.name}}</text><text>电话：{{item.phone}}</text></view>
+      <view class="line"><text>日期：{{item.appointment_date}}</text><text>时段：{{item.time_slot}}</text></view>
+      <view class="line"><text>金额：¥{{item.amount}}</text></view>
+
+      <view class="btns" wx:if="{{item.status === 0}}">
+        <button size="mini" type="primary" data-id="{{item.id}}" bindtap="onApprove">确认</button>
+        <button size="mini" type="warn" data-id="{{item.id}}" bindtap="onReject">拒绝</button>
+      </view>
+    </view>
+  </block>
+
+  <view wx:else class="empty">暂无预约数据</view>
+</view>
+

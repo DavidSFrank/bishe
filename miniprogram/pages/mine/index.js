@@ -18,5 +18,6 @@ Page({
     goToArticles() { wx.navigateTo({ url: '/pages/articles/list' }) },
     goToConsultations() { wx.navigateTo({ url: '/pages/consultation/list' }) },
     goToFavorites() { wx.navigateTo({ url: '/pages/favorites/list' }) },
-    goToProfile() { wx.navigateTo({ url: '/pages/profile/edit' }) }
+    goToProfile() { wx.navigateTo({ url: '/pages/profile/edit' }) },
+    goToAdmin() { wx.navigateTo({ url: '/pages-admin/login/login' }) }
 })

@@ -1,0 +1,9 @@
+<view class="login-page">
+  <view class="card login-card">
+    <view class="title">后台管理登录</view>
+    <input class="input" placeholder="请输入账号" value="{{form.username}}" data-field="username" bindinput="onInput" />
+    <input class="input" placeholder="请输入密码" password value="{{form.password}}" data-field="password" bindinput="onInput" />
+    <button class="btn-primary" loading="{{loading}}" bindtap="onSubmit">登录</button>
+  </view>
+</view>
+

@@ -13,7 +13,11 @@
         "pages/consultation/create",
         "pages/favorites/list",
         "pages/profile/edit",
-        "pages/mine/index"
+        "pages/mine/index",
+        "pages-admin/login/login",
+        "pages-admin/dashboard/index",
+        "pages-admin/packages/list",
+        "pages-admin/appointments/list"
     ],
     "window": {
         "backgroundTextStyle": "light",

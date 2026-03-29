@@ -1,37 +1,50 @@
 {
-    "description": "医院体检预约管理系统",
-    "packOptions": {
-        "ignore": []
+  "description": "医院体检预约管理系统",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": false,
+    "postcss": true,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
     },
-    "setting": {
-        "urlCheck": true,
-        "es6": true,
-        "enhance": false,
-        "postcss": true,
-        "preloadBackgroundData": false,
-        "minified": true,
-        "newFeature": true,
-        "coverView": true,
-        "nodeModules": false,
-        "autoAudits": false,
-        "showShadowRootInWxmlPanel": true,
-        "scopeDataCheck": false,
-        "uglifyFileName": false,
-        "checkInvalidKey": true,
-        "checkSiteMap": true,
-        "uploadWithSourceMap": true,
-        "compileHotReLoad": false,
-        "babelSetting": {
-            "ignore": [],
-            "disablePlugins": [],
-            "outputPath": ""
-        }
-    },
-    "compileType": "miniprogram",
-    "libVersion": "2.25.4",
-    "appid": "wx1234567890abcdef",
-    "projectname": "hospital-checkup",
-    "simulatorType": "wechat",
-    "simulatorPluginLibVersion": {},
-    "condition": {}
+    "compileWorklet": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.25.4",
+  "appid": "wxf9d6ef2b5446bdb8",
+  "projectname": "hospital-checkup",
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
+  "condition": {},
+  "editorSetting": {}
 }
