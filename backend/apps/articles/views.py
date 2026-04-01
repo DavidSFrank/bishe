@@ -31,6 +31,7 @@ class BannerViewSet(StandardModelViewSet):
 
 class ConsultationViewSet(StandardModelViewSet):
     serializer_class = ConsultationSerializer
+    filterset_fields = ['status']
     ordering_fields = ['created_at', 'status']
 
     def get_queryset(self):

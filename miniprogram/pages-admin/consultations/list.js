@@ -1,23 +1,40 @@
-const { fetchAppointments, updateAppointmentStatus } = require('../../services/admin/appointments')
+const {
+    fetchConsultations,
+    replyConsultation,
+    deleteConsultation
+} = require('../../services/admin/consultations')
 const { ensureAdminSession } = require('../../utils/admin-page')
 
 const PAGE_SIZE = 10
 
+const STATUS_MAP = {
+    0: '待回复',
+    1: '已回复'
+}
+
 const STATUS_OPTIONS = [
     { label: '全部', value: '' },
-    { label: '待审核', value: 0 },
-    { label: '已确认', value: 1 },
-    { label: '已完成', value: 2 },
-    { label: '已取消', value: 3 },
-    { label: '已拒绝', value: 4 }
+    { label: '待回复', value: 0 },
+    { label: '已回复', value: 1 }
 ]
 
-const STATUS_MAP = {
-    0: '待审核',
-    1: '已确认',
-    2: '已完成',
-    3: '已取消',
-    4: '已拒绝'
+function promptReply(defaultValue = '') {
+    return new Promise((resolve, reject) => {
+        wx.showModal({
+            title: '回复咨询',
+            editable: true,
+            placeholderText: '请输入回复内容',
+            content: defaultValue,
+            success: res => {
+                if (!res.confirm) {
+                    reject(new Error('cancel'))
+                    return
+                }
+                resolve((res.content || '').trim())
+            },
+            fail: reject
+        })
+    })
 }
 
 Page({
@@ -30,8 +47,8 @@ Page({
         page: 1,
         pageSize: PAGE_SIZE,
         hasMore: true,
-        statusOptions: STATUS_OPTIONS,
         statusMap: STATUS_MAP,
+        statusOptions: STATUS_OPTIONS,
         statusIndex: 0
     },
 
@@ -72,7 +89,8 @@ Page({
             if (selected && selected.value !== '') {
                 params.status = selected.value
             }
-            const data = await fetchAppointments(params)
+
+            const data = await fetchConsultations(params)
             const incoming = data.list || []
             const nextList = reset ? incoming : this.data.list.concat(incoming)
             const total = Number(data.total || 0)
@@ -83,7 +101,7 @@ Page({
                 hasMore: nextList.length < total
             })
         } catch (err) {
-            console.error('load appointments failed', err)
+            console.error('load consultations failed', err)
         } finally {
             this.setData({ [loadingKey]: false })
             if (reset) {
@@ -92,49 +110,52 @@ Page({
         }
     },
 
-    async onApprove(e) {
+    async onReply(e) {
         const id = e.currentTarget.dataset.id
+        const currentReply = e.currentTarget.dataset.reply || ''
         if (!id || this.data.actionLoading) {
             return
         }
 
-        this.setData({ actionLoading: true })
         try {
-            await updateAppointmentStatus(id, { status: 1 })
-            wx.showToast({ title: '已确认', icon: 'success' })
+            const reply = await promptReply(currentReply)
+            if (!reply) {
+                wx.showToast({ title: '回复内容不能为空', icon: 'none' })
+                return
+            }
+            this.setData({ actionLoading: true })
+            await replyConsultation(id, { reply })
+            wx.showToast({ title: '回复成功', icon: 'success' })
             this.loadData(true)
         } catch (err) {
-            console.error('approve appointment failed', err)
+            if (err && err.message !== 'cancel') {
+                console.error('reply consultation failed', err)
+            }
         } finally {
             this.setData({ actionLoading: false })
         }
     },
 
-    onReject(e) {
+    onDelete(e) {
         const id = e.currentTarget.dataset.id
         if (!id || this.data.actionLoading) {
             return
         }
 
         wx.showModal({
-            title: '拒绝预约',
-            editable: true,
-            placeholderText: '请输入拒绝原因',
-            success: async ({ confirm, content }) => {
+            title: '删除咨询',
+            content: '确认删除该咨询记录吗？',
+            success: async ({ confirm }) => {
                 if (!confirm) {
                     return
                 }
-
-                this.setData({ actionLoading: true })
                 try {
-                    await updateAppointmentStatus(id, {
-                        status: 4,
-                        reject_reason: (content || '').trim() || '管理员拒绝'
-                    })
-                    wx.showToast({ title: '已拒绝', icon: 'success' })
+                    this.setData({ actionLoading: true })
+                    await deleteConsultation(id)
+                    wx.showToast({ title: '删除成功', icon: 'success' })
                     this.loadData(true)
                 } catch (err) {
-                    console.error('reject appointment failed', err)
+                    console.error('delete consultation failed', err)
                 } finally {
                     this.setData({ actionLoading: false })
                 }
@@ -144,9 +165,5 @@ Page({
 
     goDashboard() {
         wx.navigateTo({ url: '/pages-admin/dashboard/index' })
-    },
-
-    goPackages() {
-        wx.navigateTo({ url: '/pages-admin/packages/list' })
     }
 })

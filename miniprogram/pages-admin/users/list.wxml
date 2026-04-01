@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="header">
+    <text class="title">用户管理</text>
+    <view class="actions">
+      <button size="mini" bindtap="goDashboard">控制台</button>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+
+  <block wx:elif="{{list.length}}">
+    <view class="card item" wx:for="{{list}}" wx:key="id">
+      <view class="line"><text>用户ID：{{item.id}}</text><text>{{item.is_active ? '正常' : '禁用'}}</text></view>
+      <view class="line"><text>昵称：{{item.nickname || '-'}}</text><text>姓名：{{item.real_name || '-'}}</text></view>
+      <view class="line"><text>电话：{{item.phone || '-'}}</text><text>性别：{{item.gender || '-'}}</text></view>
+      <view class="line"><text>注册：{{item.created_at || '-'}}</text></view>
+    </view>
+
+    <view wx:if="{{loadingMore}}" class="load-more">加载更多...</view>
+    <view wx:elif="{{!hasMore}}" class="load-more">已加载全部（{{total}}）</view>
+  </block>
+
+  <view wx:else class="empty">暂无用户数据</view>
+</view>
+

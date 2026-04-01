@@ -1,0 +1,28 @@
+<view class="container">
+  <view class="header">
+    <text class="title">个人资料</text>
+    <view class="actions">
+      <button size="mini" bindtap="goDashboard">控制台</button>
+      <button size="mini" type="warn" bindtap="onLogout">退出</button>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+
+  <view wx:else class="card">
+    <view class="line">账号：{{profile.username || '-'}}</view>
+    <view class="line">最后登录：{{profile.last_login || '-'}}</view>
+
+    <view class="field-title">姓名</view>
+    <input class="input" placeholder="请输入姓名" value="{{form.name}}" data-field="name" bindinput="onInput" />
+
+    <view class="field-title">原密码</view>
+    <input class="input" password placeholder="不修改密码可留空" value="{{form.old_password}}" data-field="old_password" bindinput="onInput" />
+
+    <view class="field-title">新密码</view>
+    <input class="input" password placeholder="不修改密码可留空" value="{{form.new_password}}" data-field="new_password" bindinput="onInput" />
+
+    <button class="btn-primary" loading="{{submitLoading}}" bindtap="onSubmit">保存资料</button>
+  </view>
+</view>
+

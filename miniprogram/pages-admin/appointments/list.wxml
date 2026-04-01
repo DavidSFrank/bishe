@@ -21,12 +21,14 @@
       <view class="line"><text>金额：¥{{item.amount}}</text></view>
 
       <view class="btns" wx:if="{{item.status === 0}}">
-        <button size="mini" type="primary" data-id="{{item.id}}" bindtap="onApprove">确认</button>
-        <button size="mini" type="warn" data-id="{{item.id}}" bindtap="onReject">拒绝</button>
+        <button size="mini" type="primary" loading="{{actionLoading}}" data-id="{{item.id}}" bindtap="onApprove">确认</button>
+        <button size="mini" type="warn" loading="{{actionLoading}}" data-id="{{item.id}}" bindtap="onReject">拒绝</button>
       </view>
     </view>
+
+    <view wx:if="{{loadingMore}}" class="load-more">加载更多...</view>
+    <view wx:elif="{{!hasMore}}" class="load-more">已加载全部（{{total}}）</view>
   </block>
 
   <view wx:else class="empty">暂无预约数据</view>
 </view>
-

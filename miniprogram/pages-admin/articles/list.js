@@ -1,11 +1,10 @@
-const { clearAdminSession } = require('../../utils/admin-auth')
-const { ensureAdminSession } = require('../../utils/admin-page')
 const {
-    fetchPackages,
-    createPackage,
-    updatePackage,
-    deletePackage
-} = require('../../services/admin/packages')
+    fetchArticles,
+    createArticle,
+    updateArticle,
+    deleteArticle
+} = require('../../services/admin/articles')
+const { ensureAdminSession } = require('../../utils/admin-page')
 
 const PAGE_SIZE = 10
 
@@ -33,9 +32,9 @@ Page({
         loading: false,
         loadingMore: false,
         list: [],
+        total: 0,
         page: 1,
         pageSize: PAGE_SIZE,
-        total: 0,
         hasMore: true
     },
 
@@ -44,35 +43,6 @@ Page({
             return
         }
         this.loadData(true)
-    },
-
-    async loadData(reset = false) {
-        const page = reset ? 1 : this.data.page
-        const loadingKey = reset ? 'loading' : 'loadingMore'
-        if (this.data[loadingKey]) {
-            return
-        }
-
-        this.setData({ [loadingKey]: true })
-        try {
-            const data = await fetchPackages({ page, page_size: this.data.pageSize })
-            const incoming = data.list || []
-            const nextList = reset ? incoming : this.data.list.concat(incoming)
-            const total = Number(data.total || 0)
-            this.setData({
-                list: nextList,
-                total,
-                page: page + 1,
-                hasMore: nextList.length < total
-            })
-        } catch (err) {
-            console.error('load admin packages failed', err)
-        } finally {
-            this.setData({ [loadingKey]: false })
-            if (reset) {
-                wx.stopPullDownRefresh()
-            }
-        }
     },
 
     onPullDownRefresh() {
@@ -86,51 +56,79 @@ Page({
         this.loadData(false)
     },
 
+    async loadData(reset = false) {
+        const page = reset ? 1 : this.data.page
+        const loadingKey = reset ? 'loading' : 'loadingMore'
+        if (this.data[loadingKey]) {
+            return
+        }
+
+        this.setData({ [loadingKey]: true })
+        try {
+            const data = await fetchArticles({ page, page_size: this.data.pageSize })
+            const incoming = data.list || []
+            const nextList = reset ? incoming : this.data.list.concat(incoming)
+            const total = Number(data.total || 0)
+            this.setData({
+                list: nextList,
+                total,
+                page: page + 1,
+                hasMore: nextList.length < total
+            })
+        } catch (err) {
+            console.error('load articles failed', err)
+        } finally {
+            this.setData({ [loadingKey]: false })
+            if (reset) {
+                wx.stopPullDownRefresh()
+            }
+        }
+    },
+
     async onAdd() {
         try {
-            const name = await promptText({ title: '新增套餐', placeholder: '请输入套餐名称' })
-            if (!name) {
-                wx.showToast({ title: '套餐名称不能为空', icon: 'none' })
+            const title = await promptText({ title: '新增文章', placeholder: '请输入标题' })
+            if (!title) {
+                wx.showToast({ title: '标题不能为空', icon: 'none' })
                 return
             }
-            const priceText = await promptText({ title: '新增套餐', placeholder: '请输入价格，例如 199.00' })
-            const price = Number(priceText)
-            if (!Number.isFinite(price) || price < 0) {
-                wx.showToast({ title: '价格格式不正确', icon: 'none' })
+            const content = await promptText({ title: '新增文章', placeholder: '请输入正文' })
+            if (!content) {
+                wx.showToast({ title: '正文不能为空', icon: 'none' })
                 return
             }
-            await createPackage({ name, price, description: '' })
+            await createArticle({ title, content, is_active: true })
             wx.showToast({ title: '新增成功', icon: 'success' })
             this.loadData(true)
         } catch (err) {
             if (err && err.message !== 'cancel') {
-                console.error('create package failed', err)
+                console.error('create article failed', err)
             }
         }
     },
 
     async onEdit(e) {
         const id = e.currentTarget.dataset.id
-        const currentName = e.currentTarget.dataset.name || ''
+        const currentTitle = e.currentTarget.dataset.title || ''
         if (!id) {
             return
         }
         try {
-            const name = await promptText({
-                title: '编辑套餐名称',
-                placeholder: '请输入套餐名称',
-                defaultValue: currentName
+            const title = await promptText({
+                title: '编辑标题',
+                placeholder: '请输入标题',
+                defaultValue: currentTitle
             })
-            if (!name) {
-                wx.showToast({ title: '套餐名称不能为空', icon: 'none' })
+            if (!title) {
+                wx.showToast({ title: '标题不能为空', icon: 'none' })
                 return
             }
-            await updatePackage(id, { name })
+            await updateArticle(id, { title })
             wx.showToast({ title: '更新成功', icon: 'success' })
             this.loadData(true)
         } catch (err) {
             if (err && err.message !== 'cancel') {
-                console.error('update package failed', err)
+                console.error('update article failed', err)
             }
         }
     },
@@ -141,33 +139,40 @@ Page({
             return
         }
         wx.showModal({
-            title: '删除套餐',
-            content: '删除后不可恢复，确认删除吗？',
+            title: '删除文章',
+            content: '确认删除该文章吗？',
             success: async ({ confirm }) => {
                 if (!confirm) {
                     return
                 }
                 try {
-                    await deletePackage(id)
+                    await deleteArticle(id)
                     wx.showToast({ title: '删除成功', icon: 'success' })
                     this.loadData(true)
                 } catch (err) {
-                    console.error('delete package failed', err)
+                    console.error('delete article failed', err)
                 }
             }
         })
     },
 
-    goLogin() {
-        clearAdminSession()
-        wx.redirectTo({ url: '/pages-admin/login/login' })
+    async onToggleActive(e) {
+        const id = e.currentTarget.dataset.id
+        const active = !!e.currentTarget.dataset.active
+        if (!id) {
+            return
+        }
+        try {
+            await updateArticle(id, { is_active: !active })
+            wx.showToast({ title: !active ? '已发布' : '已下线', icon: 'success' })
+            this.loadData(true)
+        } catch (err) {
+            console.error('toggle article active failed', err)
+        }
     },
 
     goDashboard() {
-        wx.redirectTo({ url: '/pages-admin/dashboard/index' })
-    },
-
-    goAppointments() {
-        wx.navigateTo({ url: '/pages-admin/appointments/list' })
+        wx.navigateTo({ url: '/pages-admin/dashboard/index' })
     }
 })
+

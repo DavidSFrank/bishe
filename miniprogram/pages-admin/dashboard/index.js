@@ -1,5 +1,6 @@
 const { fetchDashboardStats } = require('../../services/admin/dashboard')
 const { adminLogout } = require('../../services/admin/auth')
+const { ensureAdminSession } = require('../../utils/admin-page')
 
 Page({
     data: {
@@ -7,6 +8,9 @@ Page({
     },
 
     onShow() {
+        if (!ensureAdminSession(this)) {
+            return
+        }
         this.loadStats()
     },
 
@@ -27,9 +31,28 @@ Page({
         wx.navigateTo({ url: '/pages-admin/appointments/list' })
     },
 
+    goReports() {
+        wx.navigateTo({ url: '/pages-admin/reports/list' })
+    },
+
+    goUsers() {
+        wx.navigateTo({ url: '/pages-admin/users/list' })
+    },
+
+    goProfile() {
+        wx.navigateTo({ url: '/pages-admin/profile/index' })
+    },
+
+    goArticles() {
+        wx.navigateTo({ url: '/pages-admin/articles/list' })
+    },
+
+    goConsultations() {
+        wx.navigateTo({ url: '/pages-admin/consultations/list' })
+    },
+
     goLogout() {
         adminLogout()
         wx.redirectTo({ url: '/pages-admin/login/login' })
     }
 })
-

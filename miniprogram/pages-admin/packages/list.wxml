@@ -2,6 +2,7 @@
   <view class="header">
     <text class="title">套餐管理</text>
     <view class="actions">
+      <button size="mini" type="primary" bindtap="onAdd">新增</button>
       <button size="mini" bindtap="goDashboard">控制台</button>
       <button size="mini" bindtap="goAppointments">预约</button>
       <button size="mini" bindtap="goLogin">退出</button>
@@ -18,7 +19,14 @@
       </view>
       <view class="meta">销量: {{item.sales_count}} | 状态: {{item.is_active ? '上架' : '下架'}}</view>
       <view class="desc">{{item.description || '暂无描述'}}</view>
+      <view class="item-actions">
+        <button size="mini" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onEdit">编辑</button>
+        <button size="mini" type="warn" data-id="{{item.id}}" bindtap="onDelete">删除</button>
+      </view>
     </view>
+
+    <view wx:if="{{loadingMore}}" class="load-more">加载更多...</view>
+    <view wx:elif="{{!hasMore}}" class="load-more">已加载全部（{{total}}）</view>
   </block>
 
   <view wx:else class="empty">暂无套餐数据</view>

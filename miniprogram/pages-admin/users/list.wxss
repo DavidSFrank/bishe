@@ -10,18 +10,6 @@
   font-weight: 600;
 }
 
-.actions {
-  display: flex;
-  gap: 8rpx;
-}
-
-.filter {
-  padding: 18rpx 20rpx;
-  background: #fff;
-  border-radius: 12rpx;
-  margin-bottom: 16rpx;
-}
-
 .item {
   margin-bottom: 16rpx;
 }
@@ -33,19 +21,10 @@
   font-size: 26rpx;
 }
 
-.tag {
-  color: #2563eb;
-}
-
-.btns {
-  display: flex;
-  gap: 12rpx;
-  margin-top: 10rpx;
-}
-
 .load-more {
   text-align: center;
   color: #6b7280;
   font-size: 24rpx;
   padding: 20rpx 0 30rpx;
 }
+

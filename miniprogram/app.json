@@ -17,7 +17,12 @@
         "pages-admin/login/login",
         "pages-admin/dashboard/index",
         "pages-admin/packages/list",
-        "pages-admin/appointments/list"
+        "pages-admin/appointments/list",
+        "pages-admin/reports/list",
+        "pages-admin/users/list",
+        "pages-admin/profile/index",
+        "pages-admin/articles/list",
+        "pages-admin/consultations/list"
     ],
     "window": {
         "backgroundTextStyle": "light",

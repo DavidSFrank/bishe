@@ -26,4 +26,4 @@ class ConsultationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Consultation
         fields = ['id', 'user', 'user_info', 'content', 'reply', 'status', 'created_at', 'replied_at']
-        read_only_fields = ['id', 'created_at', 'replied_at']
+        read_only_fields = ['id', 'user', 'created_at', 'replied_at']

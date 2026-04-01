@@ -53,3 +53,10 @@ npm run dev
 ## 开发状态
 
 ✅ 第一阶段：环境搭建与基础架构 - **已完成**
+
+## 计划文档（固定入口）
+
+- 最终版开发计划（冻结）：`docs/plan/final-development-plan.md`
+- P0 验收清单：`docs/acceptance/p0-checklist.md`
+- P1 第二批验收（文章）：`docs/acceptance/p1-batch2-checklist.md`
+- P1 第三批验收（咨询）：`docs/acceptance/p1-batch3-checklist.md`

@@ -13,6 +13,8 @@
 .actions {
   display: flex;
   gap: 8rpx;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .grid {
@@ -42,4 +44,3 @@
 .warning {
   color: #f59e0b;
 }
-

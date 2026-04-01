@@ -10,41 +10,49 @@
   font-weight: 600;
 }
 
-.package-item {
+.item {
   margin-bottom: 16rpx;
 }
 
-.row-top {
+.line {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10rpx;
-}
-
-.name {
-  font-size: 30rpx;
-  font-weight: 600;
-}
-
-.meta {
-  color: #6b7280;
-  font-size: 24rpx;
   margin-bottom: 8rpx;
 }
 
-.desc {
-  color: #374151;
-  font-size: 26rpx;
+.status {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
 }
 
-.actions {
-  display: flex;
-  gap: 8rpx;
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.replied {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.time {
+  color: #6b7280;
+  font-size: 24rpx;
+}
+
+.content,
+.reply,
+.user {
+  margin-bottom: 8rpx;
+  font-size: 26rpx;
+  color: #374151;
 }
 
 .item-actions {
   display: flex;
-  gap: 12rpx;
+  gap: 10rpx;
   margin-top: 12rpx;
 }
 
@@ -53,4 +61,11 @@
   color: #6b7280;
   font-size: 24rpx;
   padding: 20rpx 0 30rpx;
+}
+
+.filter {
+  padding: 18rpx 20rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
 }

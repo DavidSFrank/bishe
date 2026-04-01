@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="header">
+    <text class="title">咨询管理</text>
+    <view class="actions">
+      <button size="mini" bindtap="goDashboard">控制台</button>
+    </view>
+  </view>
+
+  <picker mode="selector" range="{{statusOptions}}" range-key="label" bindchange="onStatusChange">
+    <view class="filter">筛选状态：{{statusOptions[statusIndex].label}}</view>
+  </picker>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+
+  <block wx:elif="{{list.length}}">
+    <view class="card item" wx:for="{{list}}" wx:key="id">
+      <view class="line">
+        <text class="status {{item.status === 1 ? 'replied' : 'pending'}}">{{statusMap[item.status] || '未知'}}</text>
+        <text class="time">{{item.created_at || '-'}}</text>
+      </view>
+      <view class="content">咨询：{{item.content || '无内容'}}</view>
+      <view class="reply">回复：{{item.reply || '暂无回复'}}</view>
+      <view class="user">用户：{{item.user_info.nickname || item.user_info.real_name || '-'}}</view>
+      <view class="item-actions">
+        <button size="mini" loading="{{actionLoading}}" data-id="{{item.id}}" data-reply="{{item.reply}}" bindtap="onReply">回复</button>
+        <button size="mini" type="warn" loading="{{actionLoading}}" data-id="{{item.id}}" bindtap="onDelete">删除</button>
+      </view>
+    </view>
+
+    <view wx:if="{{loadingMore}}" class="load-more">加载更多...</view>
+    <view wx:elif="{{!hasMore}}" class="load-more">已加载全部（{{total}}）</view>
+  </block>
+
+  <view wx:else class="empty">暂无咨询数据</view>
+</view>

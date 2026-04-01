@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="header">
+    <text class="title">报告管理</text>
+    <view class="actions">
+      <button size="mini" bindtap="goDashboard">控制台</button>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+
+  <block wx:elif="{{list.length}}">
+    <view class="card item" wx:for="{{list}}" wx:key="id">
+      <view class="line"><text>报告ID：{{item.id}}</text><text>日期：{{item.report_date}}</text></view>
+      <view class="line"><text>医生：{{item.doctor || '未填写'}}</text></view>
+      <view class="line"><text>预约人：{{item.appointment.name || '-'}}</text><text>订单：{{item.appointment.order_no || '-'}}</text></view>
+      <view class="summary">结论：{{item.result_summary || '暂无'}}</view>
+    </view>
+
+    <view wx:if="{{loadingMore}}" class="load-more">加载更多...</view>
+    <view wx:elif="{{!hasMore}}" class="load-more">已加载全部（{{total}}）</view>
+  </block>
+
+  <view wx:else class="empty">暂无报告数据</view>
+</view>
+
