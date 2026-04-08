@@ -10,7 +10,7 @@ from utils.response import success, error
 from utils.permissions import IsAdmin, IsUser
 from utils.viewsets import StandardModelViewSet
 from .models import User, Admin, Favorite
-from .serializers import UserSerializer, AdminSerializer, FavoriteSerializer, UserProfileSerializer
+from .serializers import UserSerializer, AdminSerializer, FavoriteSerializer, UserProfileSerializer, is_profile_completed
 from apps.appointments.models import Appointment
 from apps.packages.models import Package
 
@@ -20,16 +20,23 @@ class WxLoginView(APIView):
 
     def post(self, request):
         code = request.data.get('code')
+        stable_openid = request.data.get('openid')
         if not code:
             return error('缺少code参数', code=400)
 
-        openid = code
+        openid = stable_openid or code
         user, created = User.objects.get_or_create(openid=openid)
         if not user.is_active:
             return error('账号已被禁用', code=403, status=status.HTTP_403_FORBIDDEN)
 
         token = generate_token({"role": "user", "user_id": user.id})
-        return success({"token": token, "userInfo": UserSerializer(user).data})
+        user_data = UserSerializer(user).data
+        return success({
+            "token": token,
+            "userInfo": user_data,
+            "is_new_user": created,
+            "profile_completed": is_profile_completed(user),
+        })
 
 
 class AdminLoginView(APIView):
@@ -124,9 +131,14 @@ class UserViewSet(StandardModelViewSet):
 
     @action(detail=False, methods=['get', 'put'], url_path='me')
     def me(self, request):
+        user = User.objects.filter(id=request.user.id, is_active=True).first()
+        if not user:
+            return error('用户不存在', code=404, status=status.HTTP_404_NOT_FOUND)
+
         if request.method == 'GET':
-            return success(UserProfileSerializer(request.user).data)
-        serializer = UserProfileSerializer(request.user, data=request.data, partial=True)
+            return success(UserProfileSerializer(user).data)
+
+        serializer = UserProfileSerializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return success(serializer.data)

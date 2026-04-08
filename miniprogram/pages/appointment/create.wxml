@@ -1,11 +1,12 @@
 <view class="create-page">
   <view class="package-info card"><text class="name">{{packageName}}</text><text class="price">{{price}}</text></view>
+  <view class="tip">请确认姓名、手机号与身份证信息真实有效</view>
   <view class="form card">
-    <view class="form-item"><text class="label">姓名</text><input placeholder="请输入体检人姓名" data-field="name" bindinput="onInput"/></view>
-    <view class="form-item"><text class="label">手机</text><input placeholder="请输入手机号" type="number" data-field="phone" bindinput="onInput"/></view>
-    <view class="form-item"><text class="label">身份证</text><input placeholder="请输入身份证号" data-field="id_card" bindinput="onInput"/></view>
+    <view class="form-item"><text class="label">姓名</text><input placeholder="请输入体检人姓名" value="{{form.name}}" data-field="name" bindinput="onInput"/></view>
+    <view class="form-item"><text class="label">手机</text><input placeholder="请输入手机号" type="number" maxlength="11" value="{{form.phone}}" data-field="phone" bindinput="onInput"/></view>
+    <view class="form-item"><text class="label">身份证</text><input placeholder="请输入身份证号" maxlength="18" value="{{form.id_card}}" data-field="id_card" bindinput="onInput"/></view>
     <view class="form-item"><text class="label">性别</text>
-      <radio-group bindchange="onGenderChange"><radio value="1" checked>男</radio><radio value="2">女</radio></radio-group>
+      <radio-group bindchange="onGenderChange"><radio value="1" checked="{{form.gender === 1}}">男</radio><radio value="2" checked="{{form.gender === 2}}">女</radio></radio-group>
     </view>
     <view class="form-item"><text class="label">日期</text>
       <picker mode="date" start="{{today}}" bindchange="onDateChange"><text>{{dateStr || '请选择日期'}}</text></picker>

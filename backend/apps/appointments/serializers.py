@@ -7,6 +7,11 @@ from apps.packages.serializers import PackageSerializer
 class AppointmentSerializer(serializers.ModelSerializer):
     package = serializers.PrimaryKeyRelatedField(queryset=Package.objects.all())
     user = serializers.PrimaryKeyRelatedField(read_only=True)
+    appointment_date = serializers.DateField(required=False)
+    name = serializers.CharField(required=False, allow_blank=True)
+    phone = serializers.CharField(required=False, allow_blank=True)
+    id_card = serializers.CharField(required=False, allow_blank=True)
+    gender = serializers.IntegerField(required=False)
     date = serializers.DateField(write_only=True, required=False)
 
     class Meta:

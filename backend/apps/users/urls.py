@@ -3,8 +3,8 @@ from rest_framework.routers import DefaultRouter
 from .views import WxLoginView, AdminLoginView, AdminDashboardView, UploadView, UserViewSet, FavoriteViewSet, AdminProfileView
 
 router = DefaultRouter()
-router.register(r'', UserViewSet, basename='user')
 router.register(r'favorites', FavoriteViewSet, basename='favorite')
+router.register(r'', UserViewSet, basename='user')
 
 urlpatterns = [
     path('login/', WxLoginView.as_view()),

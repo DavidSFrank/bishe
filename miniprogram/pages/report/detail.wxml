@@ -3,4 +3,7 @@
   <view class="card"><view class="title">检查结果</view><text class="summary">{{report.result_summary || '暂无'}}</text></view>
   <button class="btn-primary" wx:if="{{report.file_url}}" bindtap="onPreview">查看报告文件</button>
 </view>
-<view class="empty" wx:if="{{!loading && !report}}"><text>报告不存在</text></view>
+<view class="empty" wx:if="{{!loading && !report}}">
+  <text>{{emptyText}}</text>
+  <button class="btn-primary" bindtap="onRetry">重试</button>
+</view>

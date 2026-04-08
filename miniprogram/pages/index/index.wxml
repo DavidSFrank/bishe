@@ -11,13 +11,13 @@
   <!-- 轮播图 -->
   <swiper class="banner-swiper" indicator-dots autoplay circular>
     <swiper-item wx:for="{{banners}}" wx:key="id">
-      <image class="banner-image" src="{{item.image}}" mode="aspectFill" />
+      <image class="banner-image" src="{{item.displayImage}}" mode="aspectFill" />
     </swiper-item>
   </swiper>
 
   <!-- 分类导航 -->
   <view class="section">
-    <view class="section-title">体检分类</view>
+    <view class="section-title">📂 体检分类</view>
     <view class="category-grid">
       <view 
         class="category-item" 
@@ -27,7 +27,7 @@
         data-name="{{item.name}}"
         bindtap="onCategoryTap"
       >
-        <view class="category-icon">{{item.icon || '📋'}}</view>
+        <view class="category-icon">{{item.displayIcon}}</view>
         <text class="category-name">{{item.name}}</text>
       </view>
     </view>
@@ -35,7 +35,7 @@
 
   <!-- 热门套餐 -->
   <view class="section">
-    <view class="section-title">热门推荐</view>
+    <view class="section-title">🔥 热门推荐</view>
     <view class="package-list">
       <view 
         class="package-card card" 
@@ -44,7 +44,7 @@
         data-id="{{item.id}}"
         bindtap="onPackageTap"
       >
-        <image class="package-image" src="{{item.image}}" mode="aspectFill" />
+        <image class="package-image" src="{{item.displayImage}}" mode="aspectFill" />
         <view class="package-info">
           <view class="package-name">{{item.name}}</view>
           <view class="package-desc">{{item.suitable_for}}</view>

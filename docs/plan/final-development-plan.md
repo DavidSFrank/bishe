@@ -1,6 +1,6 @@
 # 体检预约项目最终版开发计划（冻结版）
 
-> 更新时间：2026-04-02  
+> 更新时间：2026-04-08
 > 适用范围：`backend/` + `miniprogram/`（含用户端与管理端）  
 > 状态口径：
 > - 开发状态：`已完成` / `进行中` / `待开发`
@@ -31,28 +31,32 @@
 - 个人资料（`profile`）：`已完成`（查看/更新/退出），验收 `待验证`
 - 文章管理（`articles`）：`已完成`（列表/新增/编辑/删除/发布状态），验收 `已通过`
 - 咨询管理（`consultations`）：`已完成`（列表/回复/删除/分页/状态筛选），验收 `已通过`
-- 轮播管理（`banners`）：`待开发`
+- 轮播管理（`banners`）：`进行中`（管理页、服务层、控制台入口已接入）
 
 ## 2.2 用户端小程序（`miniprogram/pages/`）
 
-- 首页（`index`）：`进行中`（功能有基础，待联调确认）
-- 套餐（`packages/list`,`packages/detail`）：`进行中`
-- 预约（`appointment/create`,`appointment/list`）：`进行中`
-- 报告（`report/list`,`report/detail`）：`进行中`
-- 文章（`articles/list`,`articles/detail`）：`进行中`
-- 咨询（`consultation/list`,`consultation/create`）：`进行中`
-- 收藏（`favorites/list`）：`进行中`
-- 个人资料（`profile/edit`）：`进行中`
-- 我的（`mine/index`）：`进行中`
+- 首页（`index`）：`进行中`（内容展示可用，待联调回归）
+- 套餐（`packages/list`,`packages/detail`）：`进行中`（列表/详情可用，稳定性补齐中）
+- 预约（`appointment/create`,`appointment/list`）：`进行中`（创建校验、取消、筛选、分页、状态缓存已落地）
+- 报告（`report/list`,`report/detail`）：`进行中`（主流程改为列表内查看；`detail` 软保留兼容）
+- 文章（`articles/list`,`articles/detail`）：`进行中`（容错与文案常量化已补齐）
+- 咨询（`consultation/list`,`consultation/create`）：`进行中`（用户端撤回待回复咨询已落地）
+- 收藏（`favorites/list`）：`进行中`（取消收藏闭环已落地）
+- 个人资料（`profile/edit`）：`进行中`（建档校验与回填链路已接入）
+- 我的（`mine/index`）：`进行中`（登录回流与退出会话清理已接入）
 - 登录注册：`进行中`
   - 当前采用微信登录即注册（首次登录自动创建用户）
   - 非微信账号密码注册暂不在本期范围
+  - 登录守卫与 401 失效恢复已统一到请求层/页面守卫
 
 ## 2.3 后端 API（`backend/apps/`）
 
 - 用户、套餐、预约、报告、文章、咨询核心接口：`已完成`
-- 咨询状态过滤（`status`）：`已完成`
+- 咨询状态过滤与用户端撤回规则：`已完成`
+- 预约增强（资料补全拦截、我的列表筛选、用户取消预约）：`已完成`
+- 报告增强（按预约ID查询、未出具语义区分）：`已完成`
 - 管理端支持接口：`已完成`
+- 测试基线（`backend/tests/test_smoke.py`）：`进行中`（已扩展到 14 条主链路用例）
 - 额外增强（更细粒度校验、更多查询维度）：`待开发`
 
 ---
@@ -71,19 +75,21 @@
 - `docs/acceptance/p1-batch2-checklist.md` 通过（文章）
 - `docs/acceptance/p1-batch3-checklist.md` 通过（咨询）
 
-## M3（当前主线）：用户端主链路补齐
+## M3（当前主线，已进入收口）：用户端主链路补齐
 
 目标：完成用户端登录与资料、预约主链路、报告文章咨询闭环。  
 关键输出：
 - 用户认证与登录态稳定（含失效恢复）
 - 预约创建/查询/状态一致
-- 报告与内容查询可用
+- 报告与内容查询可用（报告主流程已切换为列表内查看）
 - 异常态与空态统一
+- 用户端提示文案常量化（report/appointment/consultation）
 
 验收标准：
 1. 用户端主链路（登录 -> 套餐 -> 预约 -> 报告/咨询）可一次走通
 2. 无阻断问题（白屏/死循环请求/鉴权无法恢复）
 3. 关键页面均有空态与错误提示
+4. 软保留页面无新增入口，列表内闭环可独立完成
 
 ## M4（收尾）：最终验收与发布材料
 
@@ -103,11 +109,11 @@
 
 ## 4. 本期待开发清单（按优先级）
 
-1. 用户端认证与资料闭环（最高优先）
-2. 用户端预约全流程回归与异常兜底
-3. 用户端报告/文章/咨询稳定性补齐
-4. 管理端轮播管理（`banners`）
-5. 全链路联调回归与验收报告输出
+1. M3 收口回归（用户端主链路按清单逐项验证并清缺陷）
+2. 用户端文章/套餐链路稳定性补齐（与“无新增详情入口”策略对齐）
+3. 管理端轮播管理（`banners`）收口并完成批次验收
+4. 扩展后端接口测试覆盖（在现有 14 条基线上继续补边界）
+5. 输出 M4 最终验收与演示材料
 
 ---
 
@@ -116,6 +122,8 @@
 - P0 总清单：`docs/acceptance/p0-checklist.md`
 - P1 第二批（文章）：`docs/acceptance/p1-batch2-checklist.md`
 - P1 第三批（咨询）：`docs/acceptance/p1-batch3-checklist.md`
+- P1 第四批（轮播）：`docs/acceptance/p1-batch4-checklist.md`
+- P1 用户端主链路：`docs/acceptance/p1-user-auth-guard-checklist.md`
 - 最终验收（待补齐）：`docs/acceptance/final-checklist.md`
 
 ---

@@ -33,18 +33,30 @@ App({
             wx.login({
                 success: res => {
                     if (res.code) {
+                        const cachedOpenid = wx.getStorageSync('dev_openid')
+                        const stableOpenid = cachedOpenid || `dev-openid-${res.code}`
                         // 发送code到后端换取openid
                         wx.request({
                             url: `${this.globalData.baseUrl}/users/login/`,
                             method: 'POST',
-                            data: { code: res.code },
+                            data: { code: res.code, openid: stableOpenid },
                             success: response => {
                                 if (response.data.code === 200) {
-                                    const { token, userInfo } = response.data.data
+                                    const {
+                                        token,
+                                        userInfo,
+                                        is_new_user,
+                                        profile_completed
+                                    } = response.data.data
                                     wx.setStorageSync('token', token)
                                     wx.setStorageSync('userInfo', userInfo)
+                                    wx.setStorageSync('dev_openid', userInfo.openid || stableOpenid)
                                     this.globalData.userInfo = userInfo
-                                    resolve(userInfo)
+                                    resolve({
+                                        userInfo,
+                                        isNewUser: !!is_new_user,
+                                        profileCompleted: !!profile_completed
+                                    })
                                 } else {
                                     reject(response.data.message)
                                 }

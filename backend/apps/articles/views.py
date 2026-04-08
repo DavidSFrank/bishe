@@ -1,4 +1,5 @@
 from django.utils import timezone
+from rest_framework.exceptions import ValidationError
 from utils.permissions import IsAdminOrReadOnly, IsAdmin, IsUser
 from utils.viewsets import StandardModelViewSet
 from .models import Article, Banner, Consultation
@@ -43,7 +44,7 @@ class ConsultationViewSet(StandardModelViewSet):
         role = getattr(self.request.user, 'role', None)
         if role == 'admin':
             return [IsAdmin()]
-        if self.action in ['list', 'retrieve', 'create']:
+        if self.action in ['list', 'retrieve', 'create', 'destroy']:
             return [IsUser()]
         return [IsAdmin()]
 
@@ -56,3 +57,15 @@ class ConsultationViewSet(StandardModelViewSet):
             instance.status = 1
             instance.replied_at = timezone.now()
             instance.save(update_fields=['status', 'replied_at'])
+
+    def destroy(self, request, *args, **kwargs):
+        if getattr(request.user, 'role', None) == 'admin':
+            return super().destroy(request, *args, **kwargs)
+
+        instance = self.get_object()
+        if instance.user_id != request.user.id:
+            raise ValidationError('咨询记录不存在')
+        if instance.status != 0:
+            raise ValidationError('已回复咨询不可撤回')
+        return super().destroy(request, *args, **kwargs)
+

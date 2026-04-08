@@ -8,6 +8,17 @@ const {
     clearAdminSession
 } = require('./admin-auth')
 
+const APPOINTMENT_STATE_KEY_PREFIX = 'appointment_list_state'
+
+function getUserAppointmentStateKey() {
+    const userInfo = wx.getStorageSync('userInfo') || {}
+    const uid = userInfo.id || userInfo.openid
+    if (!uid) {
+        return ''
+    }
+    return `${APPOINTMENT_STATE_KEY_PREFIX}:${uid}`
+}
+
 function getTokenByMode(authMode) {
     if (authMode === 'admin') {
         return getAdminToken()
@@ -23,9 +34,37 @@ function handleUnauthorized(authMode) {
         return
     }
 
+    clearUserSession()
+    wx.showToast({ title: '请先登录', icon: 'none' })
+}
+
+function clearUserSession() {
+    const stateKey = getUserAppointmentStateKey()
+    if (stateKey) {
+        wx.removeStorageSync(stateKey)
+    }
+    // 兼容历史全局缓存键
+    wx.removeStorageSync(APPOINTMENT_STATE_KEY_PREFIX)
     wx.removeStorageSync('token')
     wx.removeStorageSync('userInfo')
-    wx.showToast({ title: '请先登录', icon: 'none' })
+}
+
+async function requireUserLogin({ silent = false, force = false } = {}) {
+    const token = wx.getStorageSync('token')
+    const userInfo = wx.getStorageSync('userInfo')
+    if (!force && token && userInfo) {
+        return userInfo
+    }
+
+    try {
+        const loginResult = await app.wxLogin()
+        return loginResult.userInfo || loginResult
+    } catch (err) {
+        if (!silent) {
+            wx.showToast({ title: '请先登录', icon: 'none' })
+        }
+        throw err
+    }
 }
 
 function parseErrorMessage(resData, fallback) {
@@ -69,11 +108,11 @@ const request = (options) => {
 
                 if (res.statusCode === 401) {
                     handleUnauthorized(authMode)
-                    reject({ code: 401, message: 'unauthorized' })
+                    reject({ code: res.statusCode, message: 'unauthorized' })
                     return
                 }
 
-                if (res.statusCode !== 200) {
+                if (res.statusCode !== 200 && res.statusCode !== 201) {
                     const message = parseErrorMessage(body, '请求失败')
                     wx.showToast({ title: message, icon: 'none' })
                     reject({ code: res.statusCode, message, raw: res })
@@ -122,6 +161,8 @@ module.exports = {
     put,
     patch,
     del,
+    clearUserSession,
+    requireUserLogin,
     getAdmin: (url, data) => get(url, data, { authMode: 'admin' }),
     postAdmin: (url, data) => post(url, data, { authMode: 'admin' }),
     putAdmin: (url, data) => put(url, data, { authMode: 'admin' }),

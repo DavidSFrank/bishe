@@ -4,6 +4,9 @@
     <view class="content">{{item.content}}</view>
     <view class="meta">状态：{{statusMap[item.status]}}</view>
     <view class="reply" wx:if="{{item.reply}}">回复：{{item.reply}}</view>
+    <view class="actions" wx:if="{{item.status === 0}}">
+      <button class="withdraw-btn" size="mini" catchtap="onWithdraw" data-id="{{item.id}}" loading="{{removingId === item.id}}">撤回咨询</button>
+    </view>
   </view>
   <view class="empty" wx:if="{{!loading && consultations.length === 0}}"><text>暂无咨询记录</text></view>
 </view>

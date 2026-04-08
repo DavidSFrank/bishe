@@ -51,6 +51,10 @@ Page({
         wx.navigateTo({ url: '/pages-admin/consultations/list' })
     },
 
+    goBanners() {
+        wx.navigateTo({ url: '/pages-admin/banners/list' })
+    },
+
     goLogout() {
         adminLogout()
         wx.redirectTo({ url: '/pages-admin/login/login' })

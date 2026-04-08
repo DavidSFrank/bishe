@@ -4,4 +4,6 @@
 .content { font-size: 30rpx; color: #333; margin-bottom: 8rpx; }
 .meta { font-size: 24rpx; color: #999; }
 .reply { margin-top: 10rpx; font-size: 26rpx; color: #555; }
+.actions { margin-top: 16rpx; display: flex; justify-content: flex-end; }
+.withdraw-btn { color: #f44336; border-color: #f44336; background: #fff; }
 .empty { text-align: center; padding: 60rpx 0; color: #999; }

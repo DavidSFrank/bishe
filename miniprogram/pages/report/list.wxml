@@ -1,7 +1,11 @@
 <view class="list-page">
-  <view class="card" wx:for="{{reports}}" wx:key="id" data-id="{{item.id}}" bindtap="onDetail">
-    <view class="title">体检报告 - {{item.report_date}}</view>
-    <view class="summary">{{item.result_summary || '点击查看详情'}}</view>
+  <view class="card {{focusReportId === item.id ? 'focus' : ''}}" wx:for="{{reports}}" wx:key="id">
+    <view class="title">体检报告 - {{item.displayTitleDate}}</view>
+    <view class="meta">报告医生：{{item.displayDoctor}}</view>
+    <view class="summary">{{item.displaySummary}}</view>
+    <view class="actions">
+      <button class="preview-btn" size="mini" bindtap="onPreview" data-report="{{item}}" loading="{{previewingId === item.id}}">{{texts.previewButton}}</button>
+    </view>
   </view>
-  <view class="empty" wx:if="{{!loading && reports.length === 0}}"><text>暂无体检报告</text></view>
+  <view class="empty" wx:if="{{!loading && reports.length === 0}}"><text>{{texts.emptyList}}</text></view>
 </view>

@@ -14,6 +14,27 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class BannerSerializer(serializers.ModelSerializer):
+    def validate_image(self, value):
+        if not value:
+            raise serializers.ValidationError('图片地址不能为空')
+        if not (value.startswith('http://') or value.startswith('https://')):
+            raise serializers.ValidationError('图片地址需为http/https链接')
+        return value
+
+    def validate_link(self, value):
+        if not value:
+            return value
+        if value.startswith('/'):
+            return value
+        if value.startswith('http://') or value.startswith('https://'):
+            return value
+        raise serializers.ValidationError('跳转链接格式不正确')
+
+    def validate_sort_order(self, value):
+        if not isinstance(value, int):
+            raise serializers.ValidationError('排序需为整数')
+        return value
+
     class Meta:
         model = Banner
         fields = ['id', 'title', 'image', 'link', 'sort_order', 'is_active', 'created_at']

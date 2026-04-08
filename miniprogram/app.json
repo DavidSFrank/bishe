@@ -22,7 +22,8 @@
         "pages-admin/users/list",
         "pages-admin/profile/index",
         "pages-admin/articles/list",
-        "pages-admin/consultations/list"
+        "pages-admin/consultations/list",
+        "pages-admin/banners/list"
     ],
     "window": {
         "backgroundTextStyle": "light",

@@ -3,3 +3,5 @@
 .title { font-weight: bold; margin-bottom: 16rpx; font-size: 30rpx; }
 .card text { display: block; color: #666; margin-bottom: 8rpx; }
 .summary { white-space: pre-wrap; line-height: 1.6; }
+.empty { padding: 80rpx 32rpx; text-align: center; color: #999; }
+.btn-primary { margin-top: 20rpx; background: #2196f3; color: #fff; border-radius: 10rpx; }

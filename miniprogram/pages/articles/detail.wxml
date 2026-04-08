@@ -1,9 +1,9 @@
 <view class="article-detail" wx:if="{{article}}">
-  <image class="cover" src="{{article.cover_image || '/images/default-cover.png'}}" mode="aspectFill"/>
+  <image class="cover" src="{{article.displayCover}}" mode="aspectFill"/>
   <view class="title">{{article.title}}</view>
   <view class="meta">{{article.created_at}}</view>
   <view class="content">
     <rich-text nodes="{{article.content}}"></rich-text>
   </view>
 </view>
-<view class="empty" wx:if="{{!loading && !article}}"><text>文章不存在</text></view>
+<view class="empty" wx:if="{{!loading && !article}}"><text>{{emptyText}}</text></view>
