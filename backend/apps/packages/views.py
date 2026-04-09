@@ -17,11 +17,21 @@ class CategoryViewSet(StandardModelViewSet):
 class PackageViewSet(StandardModelViewSet):
     serializer_class = PackageSerializer
     permission_classes = [IsAdminOrReadOnly]
-    filterset_fields = ['category', 'is_hot', 'is_active']
+    filterset_fields = ['is_hot', 'is_active']
     search_fields = ['name', 'description', 'suitable_for']
-    ordering_fields = ['sales_count', 'created_at', 'price']
+    ordering_fields = ['id', 'sales_count', 'created_at', 'price']
 
     def get_queryset(self):
         if getattr(self.request.user, 'role', None) == 'admin':
-            return Package.objects.all()
-        return Package.objects.filter(is_active=True)
+            queryset = Package.objects.all().order_by('id')
+        else:
+            queryset = Package.objects.filter(is_active=True)
+
+        category_id = self.request.query_params.get('category')
+        if category_id not in [None, '']:
+            try:
+                queryset = queryset.filter(category_id=int(category_id))
+            except (TypeError, ValueError):
+                return queryset.none()
+
+        return queryset
