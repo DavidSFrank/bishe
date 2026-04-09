@@ -18,39 +18,48 @@ Page({
             this.setData({ currentCategory: parseInt(options.categoryId, 10) || 0 })
         }
         await this.loadCategories()
-        this.loadPackages()
+        await this.loadPackages()
     },
 
     onShow() {
         if (this._loadedOnce) {
-            this.loadCategories().then(() => {
-                this.loadPackages()
-            })
+            this.loadCategories().then(() => this.loadPackages())
             return
         }
         this._loadedOnce = true
     },
 
-    onPullDownRefresh() {
-        Promise.all([this.loadCategories(), this.loadPackages()]).finally(() => {
+    async onPullDownRefresh() {
+        try {
+            await this.loadCategories()
+            await this.loadPackages()
+        } finally {
             wx.stopPullDownRefresh()
-        })
+        }
     },
 
     async loadCategories() {
         try {
             const data = await get('/packages/categories/')
             const list = Array.isArray(data && data.list) ? data.list : (Array.isArray(data) ? data : [])
-            const categories = [{ id: 0, name: '全部' }].concat(list)
-            const categoryExists = categories.some((item) => item.id === this.data.currentCategory)
+            const normalized = list.map((item) => ({
+                ...item,
+                id: Number(item.id)
+            }))
+            const categories = [{ id: 0, name: '全部' }].concat(normalized)
+            const currentCategory = Number(this.data.currentCategory || 0)
+            const categoryExists = categories.some((item) => item.id === currentCategory)
             this.setData({
                 categories,
-                currentCategory: categoryExists ? this.data.currentCategory : 0
+                currentCategory: categoryExists ? currentCategory : 0
             })
         } catch (e) {}
     },
 
     async loadPackages() {
+        const reqId = (this._packagesReqId || 0) + 1
+        this._packagesReqId = reqId
+
         this.setData({ loading: true })
         try {
             const query = []
@@ -58,6 +67,9 @@ Page({
             if (this.data.keyword) query.push(`search=${encodeURIComponent(this.data.keyword)}`)
             const params = query.length ? `?${query.join('&')}` : ''
             const data = await get('/packages/' + params)
+            if (reqId !== this._packagesReqId) {
+                return
+            }
             const list = Array.isArray(data && data.list) ? data.list : (Array.isArray(data) ? data : [])
             const normalized = list.map((item) => ({
                 ...item,
@@ -65,6 +77,9 @@ Page({
             }))
             this.setData({ packages: normalized, loading: false })
         } catch (e) {
+            if (reqId !== this._packagesReqId) {
+                return
+            }
             this.setData({ loading: false })
             wx.showToast({ title: PACKAGE_TEXTS.listLoadFailed, icon: 'none' })
         }
