@@ -3,9 +3,21 @@ from .models import Category, Package
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    package_count = serializers.SerializerMethodField()
+    package_names = serializers.SerializerMethodField()
+
+    def get_package_count(self, obj):
+        return obj.package_set.count()
+
+    def get_package_names(self, obj):
+        return list(obj.package_set.values_list('name', flat=True)[:8])
+
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description', 'icon', 'sort_order', 'is_active', 'created_at']
+        fields = [
+            'id', 'name', 'description', 'icon', 'sort_order', 'is_active',
+            'package_count', 'package_names', 'created_at'
+        ]
         read_only_fields = ['id', 'created_at']
 
 

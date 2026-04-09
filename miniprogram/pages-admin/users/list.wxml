@@ -6,6 +6,17 @@
     </view>
   </view>
 
+  <view class="filters card">
+    <input class="search-input" placeholder="搜索昵称/姓名/手机号" value="{{keyword}}" bindinput="onKeywordInput" confirm-type="search" bindconfirm="onSearch"/>
+    <view class="status-bar">
+      <view class="status-item {{statusFilter === item.value ? 'active' : ''}}" wx:for="{{statusOptions}}" wx:key="value" data-value="{{item.value}}" bindtap="onStatusChange">{{item.label}}</view>
+    </view>
+    <view class="filter-actions">
+      <button size="mini" bindtap="onReset">重置</button>
+      <button size="mini" type="primary" bindtap="onSearch">查询</button>
+    </view>
+  </view>
+
   <view wx:if="{{loading}}" class="empty">加载中...</view>
 
   <block wx:elif="{{list.length}}">
@@ -14,6 +25,9 @@
       <view class="line"><text>昵称：{{item.nickname || '-'}}</text><text>姓名：{{item.real_name || '-'}}</text></view>
       <view class="line"><text>电话：{{item.phone || '-'}}</text><text>性别：{{item.gender || '-'}}</text></view>
       <view class="line"><text>注册：{{item.created_at || '-'}}</text></view>
+      <view class="item-actions">
+        <button size="mini" data-id="{{item.id}}" data-active="{{item.is_active}}" bindtap="onToggleActive">{{item.is_active ? '禁用' : '启用'}}</button>
+      </view>
     </view>
 
     <view wx:if="{{loadingMore}}" class="load-more">加载更多...</view>

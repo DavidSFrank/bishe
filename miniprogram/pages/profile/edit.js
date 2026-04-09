@@ -4,44 +4,53 @@ const { navigateAfterLogin } = require('../../utils/user-page')
 
 Page({
     data: {
-        form: { nickname: '', phone: '', real_name: '', id_card: '', gender: 0 },
+        form: {
+            nickname: '',
+            phone: '',
+            real_name: '',
+            id_card: '',
+            gender: 0
+        },
         genderOptions: ['未知', '男', '女'],
         returnTo: ''
     },
-    onLoad(options) {
+
+    async onLoad(options) {
         this.setData({ returnTo: options.returnTo || '' })
-    },
-    onShow() { this.preparePage() },
-    async preparePage() {
         try {
             await requireUserLogin()
-            this.loadProfile()
+            await this.loadProfile()
         } catch (e) {
             wx.navigateBack()
         }
     },
+
     async loadProfile() {
         try {
             const data = await get('/users/me/')
             this.setData({ form: { ...this.data.form, ...data } })
         } catch (e) {}
     },
+
     onInput(e) {
         const field = e.currentTarget.dataset.field
         this.setData({ form: { ...this.data.form, [field]: e.detail.value } })
     },
+
     onGenderChange(e) {
-        this.setData({ form: { ...this.data.form, gender: parseInt(e.detail.value) } })
+        this.setData({ form: { ...this.data.form, gender: parseInt(e.detail.value, 10) } })
     },
+
     async onSubmit() {
         try {
             const data = await put('/users/me/', this.data.form)
-            const app = getApp()
             const oldUserInfo = wx.getStorageSync('userInfo') || {}
             const nextUserInfo = { ...oldUserInfo, ...data }
             wx.setStorageSync('userInfo', nextUserInfo)
+            const app = getApp()
             app.globalData.userInfo = nextUserInfo
             wx.showToast({ title: '保存成功', icon: 'success' })
+
             setTimeout(() => {
                 const returnTo = decodeURIComponent(this.data.returnTo || '')
                 if (returnTo) {

@@ -4,10 +4,18 @@ const { PACKAGE_TEXTS } = require('./constants')
 const { normalizeImageUrl } = require('../../utils/image')
 
 Page({
-    data: { packages: [], loading: true, categories: [], currentCategory: 0, keyword: '', texts: PACKAGE_TEXTS },
+    data: {
+        packages: [],
+        loading: true,
+        categories: [{ id: 0, name: '全部' }],
+        currentCategory: 0,
+        keyword: '',
+        texts: PACKAGE_TEXTS
+    },
     onLoad(options) {
-        if (options.categoryId) this.setData({ currentCategory: parseInt(options.categoryId) })
+        if (options.categoryId) this.setData({ currentCategory: parseInt(options.categoryId, 10) || 0 })
         if (options.keyword) this.setData({ keyword: options.keyword })
+        this.loadCategories()
         this.loadPackages()
     },
     onShow() {
@@ -17,9 +25,16 @@ Page({
         this._loadedOnce = true
     },
     onPullDownRefresh() {
-        this.loadPackages().finally(() => {
+        Promise.all([this.loadCategories(), this.loadPackages()]).finally(() => {
             wx.stopPullDownRefresh()
         })
+    },
+    async loadCategories() {
+        try {
+            const data = await get('/packages/categories/')
+            const list = Array.isArray(data && data.list) ? data.list : (Array.isArray(data) ? data : [])
+            this.setData({ categories: [{ id: 0, name: '全部' }].concat(list) })
+        } catch (e) {}
     },
     async loadPackages() {
         try {
@@ -38,6 +53,14 @@ Page({
             this.setData({ loading: false })
             wx.showToast({ title: PACKAGE_TEXTS.listLoadFailed, icon: 'none' })
         }
+    },
+    onCategoryChange(e) {
+        const categoryId = Number(e.currentTarget.dataset.id || 0)
+        if (categoryId === this.data.currentCategory) {
+            return
+        }
+        this.setData({ currentCategory: categoryId, loading: true })
+        this.loadPackages()
     },
     onSearch(e) { this.setData({ keyword: e.detail.value }) },
     onSearchConfirm() { this.loadPackages() },

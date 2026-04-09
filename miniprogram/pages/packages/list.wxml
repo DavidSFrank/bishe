@@ -1,5 +1,8 @@
 <view class="packages-page">
   <input class="search-input" placeholder="搜索套餐" bindinput="onSearch" bindconfirm="onSearchConfirm"/>
+  <view class="category-bar" wx:if="{{categories.length}}">
+    <view class="category-item {{currentCategory === item.id ? 'active' : ''}}" wx:for="{{categories}}" wx:key="id" data-id="{{item.id}}" bindtap="onCategoryChange">{{item.name}}</view>
+  </view>
   <view class="package-card card" wx:for="{{packages}}" wx:key="id" data-id="{{item.id}}" bindtap="onPackageTap">
     <image class="package-image" src="{{item.displayImage}}" mode="aspectFill"/>
     <view class="package-info">

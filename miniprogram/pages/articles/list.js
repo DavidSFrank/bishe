@@ -4,8 +4,22 @@ const { ARTICLE_TEXTS } = require('./constants')
 const { normalizeImageUrl } = require('../../utils/image')
 
 Page({
-    data: { articles: [], loading: true, texts: ARTICLE_TEXTS },
-    onShow() { this.loadData() },
+    data: {
+        articles: [],
+        loading: true,
+        texts: ARTICLE_TEXTS
+    },
+
+    onLoad() {
+        this.loadData()
+    },
+
+    onPullDownRefresh() {
+        this.loadData().finally(() => {
+            wx.stopPullDownRefresh()
+        })
+    },
+
     async loadData() {
         try {
             const data = await get('/articles/')
@@ -20,6 +34,7 @@ Page({
             wx.showToast({ title: ARTICLE_TEXTS.listLoadFailed, icon: 'none' })
         }
     },
+
     onDetail(e) {
         const id = e.currentTarget.dataset.id
         if (!id) {

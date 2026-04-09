@@ -2,7 +2,7 @@
 App({
     globalData: {
         userInfo: null,
-        baseUrl: 'http://localhost:8000/api',  // 后端API地址
+        baseUrl: 'http://localhost:8000/api' // 后端API地址
     },
 
     onLaunch() {
@@ -35,31 +35,41 @@ App({
                     if (res.code) {
                         const cachedOpenid = wx.getStorageSync('dev_openid')
                         const stableOpenid = cachedOpenid || `dev-openid-${res.code}`
-                        // 发送code到后端换取openid
+
                         wx.request({
                             url: `${this.globalData.baseUrl}/users/login/`,
                             method: 'POST',
                             data: { code: res.code, openid: stableOpenid },
                             success: response => {
-                                if (response.data.code === 200) {
-                                    const {
-                                        token,
-                                        userInfo,
-                                        is_new_user,
-                                        profile_completed
-                                    } = response.data.data
-                                    wx.setStorageSync('token', token)
-                                    wx.setStorageSync('userInfo', userInfo)
-                                    wx.setStorageSync('dev_openid', userInfo.openid || stableOpenid)
-                                    this.globalData.userInfo = userInfo
-                                    resolve({
-                                        userInfo,
-                                        isNewUser: !!is_new_user,
-                                        profileCompleted: !!profile_completed
-                                    })
-                                } else {
-                                    reject(response.data.message)
+                                const resp = response.data || {}
+                                if (response.statusCode !== 200 || resp.code !== 200) {
+                                    reject(resp.message || '登录失败')
+                                    return
                                 }
+
+                                const {
+                                    token,
+                                    userInfo,
+                                    is_new_user,
+                                    profile_completed
+                                } = resp.data || {}
+
+                                if (!token || !userInfo) {
+                                    reject('登录响应异常')
+                                    return
+                                }
+
+                                wx.setStorageSync('token', token)
+                                wx.setStorageSync('userInfo', userInfo)
+                                wx.setStorageSync('dev_openid', userInfo.openid || stableOpenid)
+                                this.globalData.userInfo = userInfo
+
+                                resolve({
+                                    token,
+                                    userInfo,
+                                    isNewUser: !!is_new_user,
+                                    profileCompleted: !!profile_completed
+                                })
                             },
                             fail: err => reject(err)
                         })

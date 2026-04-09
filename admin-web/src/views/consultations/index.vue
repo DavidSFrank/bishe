@@ -2,9 +2,9 @@
 import { ref, onMounted } from 'vue'
 import request from '@/api/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagedList } from '@/composables/usePagedList'
 
-const consultations = ref([])
-const loading = ref(false)
+const { list: consultations, loading, total, page, pageSize, setPagedResult } = usePagedList(10)
 const dialogVisible = ref(false)
 const form = ref({ id: '', reply: '' })
 
@@ -16,8 +16,13 @@ const statusMap = {
 const loadData = async () => {
   loading.value = true
   try {
-    const data = await request.get('/articles/consultations/')
-    consultations.value = data.list || data
+    const data = await request.get('/articles/consultations/', {
+      params: {
+        page: page.value,
+        page_size: pageSize.value
+      }
+    })
+    setPagedResult(data)
   } catch (e) {} finally { loading.value = false }
 }
 
@@ -41,6 +46,17 @@ const handleDelete = async (id) => {
   await ElMessageBox.confirm('确定删除该咨询？', '提示', { type: 'warning' })
   await request.delete(`/articles/consultations/${id}/`)
   ElMessage.success('已删除')
+  loadData()
+}
+
+const onPageChange = (nextPage) => {
+  page.value = nextPage
+  loadData()
+}
+
+const onSizeChange = (nextSize) => {
+  pageSize.value = nextSize
+  page.value = 1
   loadData()
 }
 
@@ -74,6 +90,19 @@ onMounted(loadData)
       </el-table-column>
     </el-table>
 
+    <div class="pager">
+      <el-pagination
+        background
+        layout="total, sizes, prev, pager, next"
+        :total="total"
+        :current-page="page"
+        :page-size="pageSize"
+        :page-sizes="[10, 20, 50]"
+        @current-change="onPageChange"
+        @size-change="onSizeChange"
+      />
+    </div>
+
     <el-dialog v-model="dialogVisible" title="回复咨询" width="500px">
       <el-form :model="form" label-width="80px">
         <el-form-item label="回复内容">
@@ -91,4 +120,5 @@ onMounted(loadData)
 <style scoped>
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .sub { font-size: 12px; color: #999; }
+.pager { margin-top: 16px; display: flex; justify-content: flex-end; }
 </style>

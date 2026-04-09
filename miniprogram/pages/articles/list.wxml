@@ -3,7 +3,7 @@
     <image class="cover" src="{{item.displayCover}}" mode="aspectFill"/>
     <view class="content">
       <view class="title">{{item.title}}</view>
-      <view class="meta">{{item.created_at}}</view>
+      <view class="summary">{{item.summary || item.content || ''}}</view>
     </view>
   </view>
   <view class="empty" wx:if="{{!loading && articles.length === 0}}"><text>{{texts.listEmpty}}</text></view>

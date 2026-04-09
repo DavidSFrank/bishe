@@ -40,7 +40,6 @@ Page({
     onPreview() {
         const report = this.data.report || {}
         const url = report.file_url
-        if (!url) return
         const lower = url.toLowerCase()
         if (lower.endsWith('.pdf')) {
             wx.downloadFile({

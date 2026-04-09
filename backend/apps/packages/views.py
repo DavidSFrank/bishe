@@ -10,8 +10,8 @@ class CategoryViewSet(StandardModelViewSet):
 
     def get_queryset(self):
         if getattr(self.request.user, 'role', None) == 'admin':
-            return Category.objects.all()
-        return Category.objects.filter(is_active=True)
+            return Category.objects.prefetch_related('package_set').order_by('id')
+        return Category.objects.filter(is_active=True).order_by('sort_order', '-created_at')
 
 
 class PackageViewSet(StandardModelViewSet):

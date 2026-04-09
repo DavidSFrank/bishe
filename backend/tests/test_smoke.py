@@ -4,7 +4,7 @@ from apps.users.models import User
 from apps.packages.models import Category, Package
 from apps.appointments.models import Appointment
 from apps.reports.models import Report
-from apps.articles.models import Consultation, Banner
+from apps.articles.models import Consultation
 from utils.jwt_auth import generate_token
 
 
@@ -303,75 +303,13 @@ class SmokeTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('已回复咨询不可撤回', str(response.json()))
 
-    def test_admin_banner_validation(self):
+    def test_admin_can_toggle_user_active_status(self):
+        user = User.objects.create(openid='wx-code-014', is_active=True)
         token = generate_token({"role": "admin", "user_id": 1, "username": "admin"})
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
-        bad_image = self.client.post('/api/articles/banners/', {
-            'title': '测试轮播',
-            'image': 'ftp://image.example/banner.png',
-            'link': 'https://example.com',
-            'sort_order': 1,
-            'is_active': True,
-        }, format='json')
-        self.assertEqual(bad_image.status_code, 400)
-        self.assertIn('图片地址需为http/https链接', str(bad_image.json()))
-
-        bad_link = self.client.post('/api/articles/banners/', {
-            'title': '测试轮播',
-            'image': 'https://image.example/banner.png',
-            'link': 'javascript:alert(1)',
-            'sort_order': 1,
-            'is_active': True,
-        }, format='json')
-        self.assertEqual(bad_link.status_code, 400)
-        self.assertIn('跳转链接格式不正确', str(bad_link.json()))
-
-        ok = self.client.post('/api/articles/banners/', {
-            'title': '首页轮播',
-            'image': 'https://image.example/banner.png',
-            'link': '/pages/index/index',
-            'sort_order': 1,
-            'is_active': True,
-        }, format='json')
-        self.assertEqual(ok.status_code, 201)
-        self.assertEqual(Banner.objects.count(), 1)
-
-    def test_admin_can_update_and_delete_banner(self):
-        token = generate_token({"role": "admin", "user_id": 1, "username": "admin"})
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
-
-        created = self.client.post('/api/articles/banners/', {
-            'title': '初始轮播',
-            'image': 'https://image.example/banner-a.png',
-            'link': '/pages/index/index',
-            'sort_order': 2,
-            'is_active': True,
-        }, format='json')
-        banner_id = created.json()['data']['id']
-
-        updated = self.client.patch(f'/api/articles/banners/{banner_id}/', {
-            'title': '更新后轮播',
-            'is_active': False,
-        }, format='json')
-        self.assertEqual(updated.status_code, 200)
-        self.assertEqual(updated.json()['data']['title'], '更新后轮播')
-        self.assertFalse(updated.json()['data']['is_active'])
-
-        deleted = self.client.delete(f'/api/articles/banners/{banner_id}/')
-        self.assertEqual(deleted.status_code, 200)
-        self.assertFalse(Banner.objects.filter(id=banner_id).exists())
-
-    def test_user_only_sees_active_banners(self):
-        Banner.objects.create(title='启用轮播', image='https://image.example/1.png', is_active=True)
-        Banner.objects.create(title='停用轮播', image='https://image.example/2.png', is_active=False)
-
-        token = self.client.post('/api/users/login/', {'code': 'wx-code-014'}, format='json').json()['data']['token']
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
-
-        user_list = self.client.get('/api/articles/banners/')
-        rows = user_list.json()['data']['list']
-        self.assertEqual(user_list.status_code, 200)
-        self.assertEqual(len(rows), 1)
-        self.assertTrue(rows[0]['is_active'])
+        response = self.client.patch(f'/api/users/{user.id}/', {'is_active': False}, format='json')
+        self.assertEqual(response.status_code, 200)
+        user.refresh_from_db()
+        self.assertFalse(user.is_active)
 

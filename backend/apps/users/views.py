@@ -123,6 +123,9 @@ class UserViewSet(StandardModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
+    filterset_fields = ['is_active']
+    search_fields = ['nickname', 'real_name', 'phone', 'openid']
+    ordering_fields = ['created_at', 'updated_at', 'id']
 
     def get_permissions(self):
         if self.action in ['me']:
@@ -133,7 +136,7 @@ class UserViewSet(StandardModelViewSet):
     def me(self, request):
         user = User.objects.filter(id=request.user.id, is_active=True).first()
         if not user:
-            return error('用户不存在', code=404, status=status.HTTP_404_NOT_FOUND)
+            return error('登录状态已失效，请重新登录', code=401, status=status.HTTP_401_UNAUTHORIZED)
 
         if request.method == 'GET':
             return success(UserProfileSerializer(user).data)

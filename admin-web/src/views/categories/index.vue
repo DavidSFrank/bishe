@@ -2,17 +2,22 @@
 import { ref, onMounted } from 'vue'
 import request from '@/api/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagedList } from '@/composables/usePagedList'
 
-const categories = ref([])
-const loading = ref(false)
+const { list: categories, loading, total, page, pageSize, setPagedResult } = usePagedList(10)
 const dialogVisible = ref(false)
 const form = ref({ name: '', description: '', icon: '', sort_order: 0, is_active: true })
 
 const loadData = async () => {
   loading.value = true
   try {
-    const data = await request.get('/packages/categories/')
-    categories.value = data.list || data
+    const data = await request.get('/packages/categories/', {
+      params: {
+        page: page.value,
+        page_size: pageSize.value
+      }
+    })
+    setPagedResult(data)
   } catch (e) {} finally { loading.value = false }
 }
 
@@ -35,6 +40,17 @@ const handleSubmit = async () => {
   loadData()
 }
 
+const onPageChange = (nextPage) => {
+  page.value = nextPage
+  loadData()
+}
+
+const onSizeChange = (nextSize) => {
+  pageSize.value = nextSize
+  page.value = 1
+  loadData()
+}
+
 onMounted(loadData)
 </script>
 
@@ -44,6 +60,15 @@ onMounted(loadData)
     <el-table :data="categories" v-loading="loading" stripe>
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="分类名称" />
+      <el-table-column label="关联套餐" min-width="240">
+        <template #default="{row}">
+          <div class="pkg-meta">共 {{ row.package_count || 0 }} 个</div>
+          <div class="pkg-names" v-if="row.package_names && row.package_names.length">
+            {{ row.package_names.join('、') }}
+          </div>
+          <div class="pkg-empty" v-else>暂无套餐</div>
+        </template>
+      </el-table-column>
       <el-table-column prop="sort_order" label="排序" width="100" />
       <el-table-column prop="is_active" label="状态" width="100">
         <template #default="{row}">
@@ -57,6 +82,19 @@ onMounted(loadData)
         </template>
       </el-table-column>
     </el-table>
+
+    <div class="pager">
+      <el-pagination
+        background
+        layout="total, sizes, prev, pager, next"
+        :total="total"
+        :current-page="page"
+        :page-size="pageSize"
+        :page-sizes="[10, 20, 50]"
+        @current-change="onPageChange"
+        @size-change="onSizeChange"
+      />
+    </div>
 
     <el-dialog v-model="dialogVisible" :title="form.id ? '编辑分类' : '新增分类'" width="500px">
       <el-form :model="form" label-width="80px">
@@ -73,4 +111,8 @@ onMounted(loadData)
 
 <style scoped>
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.pager { margin-top: 16px; display: flex; justify-content: flex-end; }
+.pkg-meta { font-size: 12px; color: #666; }
+.pkg-names { margin-top: 4px; color: #333; }
+.pkg-empty { margin-top: 4px; color: #999; }
 </style>

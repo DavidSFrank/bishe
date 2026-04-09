@@ -2,17 +2,22 @@
 import { ref, onMounted } from 'vue'
 import request from '@/api/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagedList } from '@/composables/usePagedList'
 
-const banners = ref([])
-const loading = ref(false)
+const { list: banners, loading, total, page, pageSize, setPagedResult } = usePagedList(10)
 const dialogVisible = ref(false)
 const form = ref({ title: '', image: '', link: '', sort_order: 0, is_active: true })
 
 const loadData = async () => {
   loading.value = true
   try {
-    const data = await request.get('/articles/banners/')
-    banners.value = data.list || data
+    const data = await request.get('/articles/banners/', {
+      params: {
+        page: page.value,
+        page_size: pageSize.value
+      }
+    })
+    setPagedResult(data)
   } catch (e) {} finally { loading.value = false }
 }
 
@@ -32,6 +37,17 @@ const handleSubmit = async () => {
   }
   ElMessage.success('保存成功')
   dialogVisible.value = false
+  loadData()
+}
+
+const onPageChange = (nextPage) => {
+  page.value = nextPage
+  loadData()
+}
+
+const onSizeChange = (nextSize) => {
+  pageSize.value = nextSize
+  page.value = 1
   loadData()
 }
 
@@ -61,6 +77,19 @@ onMounted(loadData)
       </el-table-column>
     </el-table>
 
+    <div class="pager">
+      <el-pagination
+        background
+        layout="total, sizes, prev, pager, next"
+        :total="total"
+        :current-page="page"
+        :page-size="pageSize"
+        :page-sizes="[10, 20, 50]"
+        @current-change="onPageChange"
+        @size-change="onSizeChange"
+      />
+    </div>
+
     <el-dialog v-model="dialogVisible" :title="form.id ? '编辑轮播图' : '新增轮播图'" width="520px">
       <el-form :model="form" label-width="80px">
         <el-form-item label="标题"><el-input v-model="form.title" /></el-form-item>
@@ -76,4 +105,5 @@ onMounted(loadData)
 
 <style scoped>
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.pager { margin-top: 16px; display: flex; justify-content: flex-end; }
 </style>

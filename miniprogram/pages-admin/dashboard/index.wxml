@@ -10,7 +10,6 @@
       <button size="mini" bindtap="goArticles">文章</button>
       <button size="mini" bindtap="goConsultations">咨询</button>
       <button size="mini" bindtap="goBanners">轮播</button>
-      <button size="mini" bindtap="goLogout">退出</button>
     </view>
   </view>
 

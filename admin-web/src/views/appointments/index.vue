@@ -2,9 +2,10 @@
 import { ref, onMounted } from 'vue'
 import request from '@/api/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagedList } from '@/composables/usePagedList'
 
-const appointments = ref([])
-const loading = ref(false)
+const statusFilter = ref(null)
+const { list: appointments, loading, total, page, pageSize, setPagedResult } = usePagedList(10)
 const statusOptions = [
   { value: 0, label: '待审核', type: 'warning' },
   { value: 1, label: '已确认', type: 'primary' },
@@ -16,21 +17,44 @@ const statusOptions = [
 const loadData = async () => {
   loading.value = true
   try {
-    const data = await request.get('/appointments/')
-    appointments.value = data.list || data
+    const params = {
+      page: page.value,
+      page_size: pageSize.value
+    }
+    if (statusFilter.value !== null && statusFilter.value !== undefined) {
+      params.status = statusFilter.value
+    }
+    const data = await request.get('/appointments/', { params })
+    setPagedResult(data)
   } catch (e) {} finally { loading.value = false }
 }
 
 const handleApprove = async (id) => {
-  await request.put(`/appointments/${id}/`, { status: 1 })
+  await request.patch(`/appointments/${id}/`, { status: 1 })
   ElMessage.success('已确认')
   loadData()
 }
 
 const handleReject = async (id) => {
   const { value } = await ElMessageBox.prompt('请输入拒绝原因', '提示')
-  await request.put(`/appointments/${id}/`, { status: 4, reject_reason: value })
+  await request.patch(`/appointments/${id}/`, { status: 4, reject_reason: value })
   ElMessage.success('已拒绝')
+  loadData()
+}
+
+const handleFilterChange = () => {
+  page.value = 1
+  loadData()
+}
+
+const onPageChange = (nextPage) => {
+  page.value = nextPage
+  loadData()
+}
+
+const onSizeChange = (nextSize) => {
+  pageSize.value = nextSize
+  page.value = 1
   loadData()
 }
 
@@ -40,6 +64,11 @@ onMounted(loadData)
 <template>
   <div class="appointments-page">
     <h2>预约管理</h2>
+    <div class="toolbar">
+      <el-select v-model="statusFilter" clearable placeholder="全部状态" style="width: 140px" @change="handleFilterChange">
+        <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+    </div>
     <el-table :data="appointments" v-loading="loading" stripe>
       <el-table-column prop="order_no" label="订单号" width="180" />
       <el-table-column prop="name" label="体检人" width="100" />
@@ -61,7 +90,24 @@ onMounted(loadData)
         </template>
       </el-table-column>
     </el-table>
+
+    <div class="pager">
+      <el-pagination
+        background
+        layout="total, sizes, prev, pager, next"
+        :total="total"
+        :current-page="page"
+        :page-size="pageSize"
+        :page-sizes="[10, 20, 50]"
+        @current-change="onPageChange"
+        @size-change="onSizeChange"
+      />
+    </div>
   </div>
 </template>
 
-<style scoped>h2 { margin-bottom: 20px; }</style>
+<style scoped>
+h2 { margin-bottom: 16px; }
+.toolbar { margin-bottom: 12px; }
+.pager { margin-top: 16px; display: flex; justify-content: flex-end; }
+</style>

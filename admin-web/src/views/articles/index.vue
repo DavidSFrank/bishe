@@ -2,17 +2,22 @@
 import { ref, onMounted } from 'vue'
 import request from '@/api/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagedList } from '@/composables/usePagedList'
 
-const articles = ref([])
-const loading = ref(false)
+const { list: articles, loading, total, page, pageSize, setPagedResult } = usePagedList(10)
 const dialogVisible = ref(false)
 const form = ref({ title: '', content: '', cover_image: '' })
 
 const loadData = async () => {
   loading.value = true
   try {
-    const data = await request.get('/articles/')
-    articles.value = data.list || data
+    const data = await request.get('/articles/', {
+      params: {
+        page: page.value,
+        page_size: pageSize.value
+      }
+    })
+    setPagedResult(data)
   } catch (e) {} finally { loading.value = false }
 }
 
@@ -32,6 +37,17 @@ const handleSubmit = async () => {
   loadData()
 }
 
+const onPageChange = (nextPage) => {
+  page.value = nextPage
+  loadData()
+}
+
+const onSizeChange = (nextSize) => {
+  pageSize.value = nextSize
+  page.value = 1
+  loadData()
+}
+
 onMounted(loadData)
 </script>
 
@@ -46,6 +62,18 @@ onMounted(loadData)
       <el-table-column prop="is_active" label="状态" width="80"><template #default="{row}"><el-tag :type="row.is_active ? 'success' : 'info'">{{ row.is_active ? '发布' : '草稿' }}</el-tag></template></el-table-column>
       <el-table-column label="操作" width="150"><template #default="{row}"><el-button link type="primary" @click="handleEdit(row)">编辑</el-button><el-button link type="danger" @click="handleDelete(row.id)">删除</el-button></template></el-table-column>
     </el-table>
+    <div class="pager">
+      <el-pagination
+        background
+        layout="total, sizes, prev, pager, next"
+        :total="total"
+        :current-page="page"
+        :page-size="pageSize"
+        :page-sizes="[10, 20, 50]"
+        @current-change="onPageChange"
+        @size-change="onSizeChange"
+      />
+    </div>
     <el-dialog v-model="dialogVisible" :title="form.id ? '编辑文章' : '发布文章'" width="600px">
       <el-form :model="form" label-width="80px">
         <el-form-item label="标题"><el-input v-model="form.title" /></el-form-item>
@@ -56,4 +84,7 @@ onMounted(loadData)
   </div>
 </template>
 
-<style scoped>.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }</style>
+<style scoped>
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.pager { margin-top: 16px; display: flex; justify-content: flex-end; }
+</style>

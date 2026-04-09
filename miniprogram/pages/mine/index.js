@@ -20,22 +20,26 @@ Page({
             this.setData({ userInfo: nextUserInfo, isLogin: true })
         } catch (e) {}
     },
+
     async onLogin() {
         try {
-            const userInfo = await requireUserLogin({ force: true })
-            this.setData({ userInfo, isLogin: true })
-
+            await requireUserLogin()
+            await this.refreshProfile()
             const returnUrl = consumeReturnUrl()
             if (returnUrl) {
                 navigateAfterLogin(returnUrl)
             }
         } catch (e) {}
     },
+
     onLogout() {
         clearUserSession()
+        const app = getApp()
+        app.globalData.userInfo = null
         this.setData({ userInfo: null, isLogin: false })
-        wx.showToast({ title: '已退出登录', icon: 'success' })
+        wx.showToast({ title: '已退出登录', icon: 'none' })
     },
+
     goToAppointments() { wx.switchTab({ url: '/pages/appointment/list' }) },
     goToReports() { wx.navigateTo({ url: '/pages/report/list' }) },
     goToArticles() { wx.navigateTo({ url: '/pages/articles/list' }) },

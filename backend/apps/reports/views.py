@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from rest_framework.decorators import action
 from utils.permissions import IsAdmin, IsUser
 from utils.response import success, error
@@ -65,3 +66,33 @@ class ReportViewSet(StandardModelViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return success(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='appointment-options')
+    def appointment_options(self, request):
+        keyword = (request.query_params.get('keyword') or '').strip()
+        queryset = Appointment.objects.select_related('package', 'user').filter(
+            report__isnull=True,
+            status__in=[1, 2]
+        ).order_by('-appointment_date', '-id')
+
+        if keyword:
+            queryset = queryset.filter(
+                Q(order_no__icontains=keyword)
+                | Q(name__icontains=keyword)
+                | Q(phone__icontains=keyword)
+            )
+
+        rows = [
+            {
+                'id': item.id,
+                'order_no': item.order_no,
+                'name': item.name,
+                'phone': item.phone,
+                'appointment_date': item.appointment_date,
+                'time_slot': item.time_slot,
+                'package_name': item.package.name if item.package else ''
+            }
+            for item in queryset[:100]
+        ]
+        return success(rows)
+

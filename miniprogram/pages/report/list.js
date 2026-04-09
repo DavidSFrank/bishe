@@ -22,6 +22,11 @@ Page({
         }
         this.loadData()
     },
+    onPullDownRefresh() {
+        this.loadData().finally(() => {
+            wx.stopPullDownRefresh()
+        })
+    },
     async loadData() {
         try {
             const data = await get('/reports/my/')
@@ -41,15 +46,15 @@ Page({
                     const appointmentId = appointment ? appointment.id : ''
                     return String(appointmentId || '') === targetAppointmentId
                 })
-                if (matched) {
+                if (matched && matched.id) {
                     focusReportId = matched.id
-                } else {
-                    wx.showToast({ title: REPORT_TEXTS.notReady, icon: 'none' })
                 }
             }
 
             this.setData({ reports, loading: false, focusReportId })
-        } catch (e) { this.setData({ loading: false }) }
+        } catch (e) {
+            this.setData({ loading: false })
+        }
     },
     onPreview(e) {
         const report = e.currentTarget.dataset.report || {}
