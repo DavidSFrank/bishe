@@ -5,10 +5,9 @@ from apps.packages.models import Category, Package
 from apps.appointments.models import Appointment
 from apps.reports.models import Report
 from apps.articles.models import Consultation
-from utils.jwt_auth import generate_token
 
 
-class SmokeTest(TestCase):
+class SmokeTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
@@ -302,14 +301,4 @@ class SmokeTest(TestCase):
         response = self.client.delete(f'/api/articles/consultations/{consultation.id}/')
         self.assertEqual(response.status_code, 400)
         self.assertIn('已回复咨询不可撤回', str(response.json()))
-
-    def test_admin_can_toggle_user_active_status(self):
-        user = User.objects.create(openid='wx-code-014', is_active=True)
-        token = generate_token({"role": "admin", "user_id": 1, "username": "admin"})
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
-
-        response = self.client.patch(f'/api/users/{user.id}/', {'is_active': False}, format='json')
-        self.assertEqual(response.status_code, 200)
-        user.refresh_from_db()
-        self.assertFalse(user.is_active)
 

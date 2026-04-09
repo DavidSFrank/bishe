@@ -19,7 +19,6 @@ Page({
             this.setData({ loading: false, emptyText: PACKAGE_TEXTS.invalidPackage })
             return
         }
-        this.targetId = id
         this.loadPackage(id)
     },
 

@@ -108,7 +108,7 @@ const request = (options) => {
 
                 if (res.statusCode === 401) {
                     handleUnauthorized(authMode)
-                    reject({ code: res.statusCode, message: 'unauthorized' })
+                    reject({ code: 401, message: 'unauthorized' })
                     return
                 }
 

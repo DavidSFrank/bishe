@@ -19,11 +19,14 @@ const loadData = async () => {
     const data = await request.get('/articles/consultations/', {
       params: {
         page: page.value,
-        page_size: pageSize.value
+        page_size: pageSize.value,
+        ordering: '-created_at'
       }
     })
     setPagedResult(data)
-  } catch (e) {} finally { loading.value = false }
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleReply = (row) => {
@@ -36,7 +39,7 @@ const handleSubmit = async () => {
     ElMessage.error('请输入回复内容')
     return
   }
-  await request.put(`/articles/consultations/${form.value.id}/`, { reply: form.value.reply })
+  await request.patch(`/articles/consultations/${form.value.id}/`, { reply: form.value.reply.trim() })
   ElMessage.success('回复已保存')
   dialogVisible.value = false
   loadData()
@@ -60,6 +63,8 @@ const onSizeChange = (nextSize) => {
   loadData()
 }
 
+const getRowNo = (index) => (page.value - 1) * pageSize.value + index + 1
+
 onMounted(loadData)
 </script>
 
@@ -67,7 +72,9 @@ onMounted(loadData)
   <div class="consultations-page">
     <div class="header"><h2>在线咨询</h2></div>
     <el-table :data="consultations" v-loading="loading" stripe>
-      <el-table-column prop="id" label="ID" width="80" />
+      <el-table-column label="序号" width="80">
+        <template #default="{ $index }">{{ getRowNo($index) }}</template>
+      </el-table-column>
       <el-table-column label="用户" width="160">
         <template #default="{ row }">
           <div>{{ row.user_info?.nickname || '用户' }}</div>

@@ -3,7 +3,11 @@ const { requireUserLogin, clearUserSession, get } = require('../../utils/request
 const { consumeReturnUrl, navigateAfterLogin } = require('../../utils/user-page')
 
 Page({
-    data: { userInfo: null, isLogin: false },
+    data: {
+        userInfo: null,
+        isLogin: false
+    },
+
     onShow() {
         const userInfo = wx.getStorageSync('userInfo')
         this.setData({ userInfo, isLogin: !!userInfo })
@@ -11,6 +15,7 @@ Page({
             this.refreshProfile()
         }
     },
+
     async refreshProfile() {
         try {
             const profile = await get('/users/me/')

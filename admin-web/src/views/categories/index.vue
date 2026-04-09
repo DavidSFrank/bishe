@@ -18,22 +18,47 @@ const loadData = async () => {
       }
     })
     setPagedResult(data)
-  } catch (e) {} finally { loading.value = false }
+  } finally {
+    loading.value = false
+  }
 }
 
-const handleAdd = () => { form.value = { name: '', description: '', icon: '', sort_order: 0, is_active: true }; dialogVisible.value = true }
-const handleEdit = (row) => { form.value = { ...row }; dialogVisible.value = true }
+const handleAdd = () => {
+  form.value = { name: '', description: '', icon: '', sort_order: 0, is_active: true }
+  dialogVisible.value = true
+}
+
+const handleEdit = (row) => {
+  form.value = {
+    id: row.id,
+    name: row.name || '',
+    description: row.description || '',
+    icon: row.icon || '',
+    sort_order: Number(row.sort_order || 0),
+    is_active: !!row.is_active
+  }
+  dialogVisible.value = true
+}
+
 const handleDelete = async (id) => {
   await ElMessageBox.confirm('确定删除？', '提示')
   await request.delete(`/packages/categories/${id}/`)
   ElMessage.success('删除成功')
   loadData()
 }
+
 const handleSubmit = async () => {
+  const payload = {
+    name: form.value.name,
+    description: form.value.description,
+    icon: form.value.icon,
+    sort_order: form.value.sort_order,
+    is_active: form.value.is_active
+  }
   if (form.value.id) {
-    await request.put(`/packages/categories/${form.value.id}/`, form.value)
+    await request.put(`/packages/categories/${form.value.id}/`, payload)
   } else {
-    await request.post('/packages/categories/', form.value)
+    await request.post('/packages/categories/', payload)
   }
   ElMessage.success('保存成功')
   dialogVisible.value = false
@@ -56,12 +81,16 @@ onMounted(loadData)
 
 <template>
   <div class="categories-page">
-    <div class="header"><h2>分类管理</h2><el-button type="primary" @click="handleAdd">新增分类</el-button></div>
+    <div class="header">
+      <h2>分类管理</h2>
+      <el-button type="primary" @click="handleAdd">新增分类</el-button>
+    </div>
+
     <el-table :data="categories" v-loading="loading" stripe>
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="分类名称" />
       <el-table-column label="关联套餐" min-width="240">
-        <template #default="{row}">
+        <template #default="{ row }">
           <div class="pkg-meta">共 {{ row.package_count || 0 }} 个</div>
           <div class="pkg-names" v-if="row.package_names && row.package_names.length">
             {{ row.package_names.join('、') }}
@@ -71,12 +100,12 @@ onMounted(loadData)
       </el-table-column>
       <el-table-column prop="sort_order" label="排序" width="100" />
       <el-table-column prop="is_active" label="状态" width="100">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-tag :type="row.is_active ? 'success' : 'danger'">{{ row.is_active ? '启用' : '禁用' }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="160">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
           <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
         </template>
@@ -101,10 +130,13 @@ onMounted(loadData)
         <el-form-item label="名称"><el-input v-model="form.name" /></el-form-item>
         <el-form-item label="描述"><el-input v-model="form.description" /></el-form-item>
         <el-form-item label="图标"><el-input v-model="form.icon" placeholder="可填写emoji或图标类名" /></el-form-item>
-        <el-form-item label="排序"><el-input-number v-model="form.sort_order" :min="0" /></el-form-item>
+        <el-form-item label="排序"><el-input-number v-model="form.sort_order" :min="0" style="width: 100%" /></el-form-item>
         <el-form-item label="启用"><el-switch v-model="form.is_active" /></el-form-item>
       </el-form>
-      <template #footer><el-button @click="dialogVisible = false">取消</el-button><el-button type="primary" @click="handleSubmit">确定</el-button></template>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSubmit">确定</el-button>
+      </template>
     </el-dialog>
   </div>
 </template>

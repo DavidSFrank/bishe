@@ -1,5 +1,4 @@
 const { fetchDashboardStats } = require('../../services/admin/dashboard')
-const { adminLogout } = require('../../services/admin/auth')
 const { ensureAdminSession } = require('../../utils/admin-page')
 
 Page({
@@ -53,6 +52,5 @@ Page({
 
     goBanners() {
         wx.navigateTo({ url: '/pages-admin/banners/list' })
-
     }
 })

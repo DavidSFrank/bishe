@@ -12,9 +12,11 @@ Page({
         previewingId: 0,
         texts: REPORT_TEXTS
     },
+
     onLoad(options) {
         this.setData({ targetAppointmentId: options.appointmentId || '' })
     },
+
     async onShow() {
         const passed = await ensureUserSession()
         if (!passed) {
@@ -22,11 +24,13 @@ Page({
         }
         this.loadData()
     },
+
     onPullDownRefresh() {
         this.loadData().finally(() => {
             wx.stopPullDownRefresh()
         })
     },
+
     async loadData() {
         try {
             const data = await get('/reports/my/')
@@ -37,9 +41,9 @@ Page({
                 displayDoctor: item.doctor || REPORT_TEXTS.doctorFallback,
                 displaySummary: item.result_summary || REPORT_TEXTS.summaryFallback
             }))
+
             const targetAppointmentId = String(this.data.targetAppointmentId || '')
             let focusReportId = 0
-
             if (targetAppointmentId) {
                 const matched = reports.find((item) => {
                     const appointment = item && item.appointment ? item.appointment : null
@@ -56,6 +60,7 @@ Page({
             this.setData({ loading: false })
         }
     },
+
     onPreview(e) {
         const report = e.currentTarget.dataset.report || {}
         if (this.data.previewingId) {

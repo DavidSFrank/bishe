@@ -12,38 +12,53 @@ Page({
         keyword: '',
         texts: PACKAGE_TEXTS
     },
-    onLoad(options) {
-        if (options.categoryId) this.setData({ currentCategory: parseInt(options.categoryId, 10) || 0 })
-        if (options.keyword) this.setData({ keyword: options.keyword })
-        this.loadCategories()
+
+    async onLoad(options) {
+        if (options.categoryId) {
+            this.setData({ currentCategory: parseInt(options.categoryId, 10) || 0 })
+        }
+        await this.loadCategories()
         this.loadPackages()
     },
+
     onShow() {
         if (this._loadedOnce) {
-            this.loadPackages()
+            this.loadCategories().then(() => {
+                this.loadPackages()
+            })
+            return
         }
         this._loadedOnce = true
     },
+
     onPullDownRefresh() {
         Promise.all([this.loadCategories(), this.loadPackages()]).finally(() => {
             wx.stopPullDownRefresh()
         })
     },
+
     async loadCategories() {
         try {
             const data = await get('/packages/categories/')
             const list = Array.isArray(data && data.list) ? data.list : (Array.isArray(data) ? data : [])
-            this.setData({ categories: [{ id: 0, name: '全部' }].concat(list) })
+            const categories = [{ id: 0, name: '全部' }].concat(list)
+            const categoryExists = categories.some((item) => item.id === this.data.currentCategory)
+            this.setData({
+                categories,
+                currentCategory: categoryExists ? this.data.currentCategory : 0
+            })
         } catch (e) {}
     },
+
     async loadPackages() {
+        this.setData({ loading: true })
         try {
             const query = []
             if (this.data.currentCategory) query.push(`category=${this.data.currentCategory}`)
             if (this.data.keyword) query.push(`search=${encodeURIComponent(this.data.keyword)}`)
             const params = query.length ? `?${query.join('&')}` : ''
-            const packages = await get('/packages/' + params)
-            const list = Array.isArray(packages && packages.list) ? packages.list : (Array.isArray(packages) ? packages : [])
+            const data = await get('/packages/' + params)
+            const list = Array.isArray(data && data.list) ? data.list : (Array.isArray(data) ? data : [])
             const normalized = list.map((item) => ({
                 ...item,
                 displayImage: normalizeImageUrl(item.image)
@@ -54,16 +69,24 @@ Page({
             wx.showToast({ title: PACKAGE_TEXTS.listLoadFailed, icon: 'none' })
         }
     },
+
     onCategoryChange(e) {
         const categoryId = Number(e.currentTarget.dataset.id || 0)
         if (categoryId === this.data.currentCategory) {
             return
         }
-        this.setData({ currentCategory: categoryId, loading: true })
+        this.setData({ currentCategory: categoryId })
         this.loadPackages()
     },
-    onSearch(e) { this.setData({ keyword: e.detail.value }) },
-    onSearchConfirm() { this.loadPackages() },
+
+    onSearch(e) {
+        this.setData({ keyword: e.detail.value })
+    },
+
+    onSearchConfirm() {
+        this.loadPackages()
+    },
+
     onPackageTap(e) {
         const id = e.currentTarget.dataset.id
         if (!id) {

@@ -18,17 +18,28 @@ const loadData = async () => {
       }
     })
     setPagedResult(data)
-  } catch (e) {} finally { loading.value = false }
+  } finally {
+    loading.value = false
+  }
 }
 
-const handleAdd = () => { form.value = { title: '', image: '', link: '', sort_order: 0, is_active: true }; dialogVisible.value = true }
-const handleEdit = (row) => { form.value = { ...row }; dialogVisible.value = true }
+const handleAdd = () => {
+  form.value = { title: '', image: '', link: '', sort_order: 0, is_active: true }
+  dialogVisible.value = true
+}
+
+const handleEdit = (row) => {
+  form.value = { ...row }
+  dialogVisible.value = true
+}
+
 const handleDelete = async (id) => {
   await ElMessageBox.confirm('确定删除？', '提示')
   await request.delete(`/articles/banners/${id}/`)
   ElMessage.success('删除成功')
   loadData()
 }
+
 const handleSubmit = async () => {
   if (form.value.id) {
     await request.put(`/articles/banners/${form.value.id}/`, form.value)
@@ -61,16 +72,16 @@ onMounted(loadData)
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="title" label="标题" />
       <el-table-column prop="image" label="图片" width="200">
-        <template #default="{row}"><el-image :src="row.image" style="width: 120px; height: 60px" fit="cover" /></template>
+        <template #default="{ row }"><el-image :src="row.image" style="width: 120px; height: 60px" fit="cover" /></template>
       </el-table-column>
       <el-table-column prop="sort_order" label="排序" width="100" />
       <el-table-column prop="is_active" label="状态" width="100">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-tag :type="row.is_active ? 'success' : 'danger'">{{ row.is_active ? '启用' : '禁用' }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="160">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
           <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
         </template>

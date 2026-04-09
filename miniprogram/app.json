@@ -26,7 +26,6 @@
         "pages-admin/banners/list"
     ],
     "window": {
-        "backgroundTextStyle": "light",
         "navigationBarBackgroundColor": "#2196F3",
         "navigationBarTitleText": "医院体检预约",
         "navigationBarTextStyle": "white"

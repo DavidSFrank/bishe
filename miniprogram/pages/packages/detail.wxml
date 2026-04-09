@@ -9,7 +9,7 @@
   <view class="section card"><view class="section-title">套餐详情</view><text>{{package.description}}</text></view>
   <view class="section card" wx:if="{{package.notice}}"><view class="section-title">注意事项</view><text>{{package.notice}}</text></view>
   <view class="bottom-bar">
-    <button class="btn-secondary" bindtap="onToggleFavorite" loading="{{operatingFavorite}}">{{isFavorite ? '已收藏' : '收藏'}}</button>
+    <button class="btn-secondary" bindtap="onToggleFavorite">{{isFavorite ? '已收藏' : '收藏'}}</button>
     <button class="btn-primary" bindtap="onAppointment">立即预约</button>
   </view>
 </view>

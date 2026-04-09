@@ -59,10 +59,9 @@ request.interceptors.response.use(
         const { data } = response
         if (data.code === 200) {
             return data.data
-        } else {
-            ElMessage.error(pickErrorMessage(data))
-            return Promise.reject(data)
         }
+        ElMessage.error(pickErrorMessage(data))
+        return Promise.reject(data)
     },
     error => {
         const status = error.response?.status

@@ -31,25 +31,16 @@ Page({
             ])
 
             const bannerList = Array.isArray(banners && banners.list) ? banners.list : (Array.isArray(banners) ? banners : [])
-            const normalizedBanners = bannerList.filter(Boolean).map((item) => ({
-                ...item,
-                displayImage: normalizeImageUrl(item.image)
-            }))
             const categoryList = Array.isArray(categories && categories.list) ? categories.list : (Array.isArray(categories) ? categories : [])
-            const normalizedCategories = categoryList.filter(Boolean).map((item, index) => ({
-                ...item,
-                displayIcon: item.icon || CATEGORY_EMOJI_FALLBACKS[index % CATEGORY_EMOJI_FALLBACKS.length]
-            }))
-            const rawPackages = packages && packages.list ? packages.list : packages
-            const normalizedPackages = (Array.isArray(rawPackages) ? rawPackages : []).filter(Boolean).map((item) => ({
-                ...item,
-                displayImage: normalizeImageUrl(item.image)
-            }))
+            const packageList = Array.isArray(packages && packages.list) ? packages.list : (Array.isArray(packages) ? packages : [])
 
             this.setData({
-                banners: normalizedBanners,
-                categories: normalizedCategories,
-                hotPackages: normalizedPackages,
+                banners: bannerList.map((item) => ({ ...item, displayImage: normalizeImageUrl(item.image) })),
+                categories: categoryList.map((item, index) => ({
+                    ...item,
+                    displayIcon: item.icon || CATEGORY_EMOJI_FALLBACKS[index % CATEGORY_EMOJI_FALLBACKS.length]
+                })),
+                hotPackages: packageList.map((item) => ({ ...item, displayImage: normalizeImageUrl(item.image) })),
                 loading: false
             })
         } catch (error) {

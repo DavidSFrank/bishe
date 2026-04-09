@@ -26,7 +26,9 @@ const loadData = async () => {
     }
     const data = await request.get('/appointments/', { params })
     setPagedResult(data)
-  } catch (e) {} finally { loading.value = false }
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleApprove = async (id) => {
@@ -64,25 +66,31 @@ onMounted(loadData)
 <template>
   <div class="appointments-page">
     <h2>预约管理</h2>
+
     <div class="toolbar">
       <el-select v-model="statusFilter" clearable placeholder="全部状态" style="width: 140px" @change="handleFilterChange">
         <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
     </div>
+
     <el-table :data="appointments" v-loading="loading" stripe>
       <el-table-column prop="order_no" label="订单号" width="180" />
       <el-table-column prop="name" label="体检人" width="100" />
       <el-table-column prop="phone" label="电话" width="130" />
       <el-table-column prop="appointment_date" label="预约日期" width="120" />
       <el-table-column prop="time_slot" label="时段" width="100" />
-      <el-table-column prop="amount" label="金额" width="100"><template #default="{row}">¥{{ row.amount }}</template></el-table-column>
+      <el-table-column prop="amount" label="金额" width="100">
+        <template #default="{ row }">¥{{ row.amount }}</template>
+      </el-table-column>
       <el-table-column prop="status" label="状态" width="100">
-        <template #default="{row}">
-          <el-tag :type="statusOptions.find(s => s.value === row.status)?.type">{{ statusOptions.find(s => s.value === row.status)?.label }}</el-tag>
+        <template #default="{ row }">
+          <el-tag :type="statusOptions.find((s) => s.value === row.status)?.type">
+            {{ statusOptions.find((s) => s.value === row.status)?.label }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="150">
-        <template #default="{row}">
+        <template #default="{ row }">
           <template v-if="row.status === 0">
             <el-button link type="success" @click="handleApprove(row.id)">确认</el-button>
             <el-button link type="danger" @click="handleReject(row.id)">拒绝</el-button>

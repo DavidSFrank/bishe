@@ -1,6 +1,6 @@
 <view class="favorites-page">
   <view class="card" wx:for="{{favorites}}" wx:key="id" bindtap="onPackageTap" data-id="{{item.package_info.id}}">
-    <image class="cover" src="{{item.package_info.displayImage || '/images/tab-package.png'}}" mode="aspectFill"/>
+    <image class="cover" src="{{item.package_info.displayImage}}" mode="aspectFill"/>
     <view class="content">
       <view class="title">{{item.package_info.name}}</view>
       <view class="price">¥{{item.package_info.price}}</view>
