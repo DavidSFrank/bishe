@@ -1,6 +1,6 @@
 <view class="mine-page">
   <view class="user-card card" wx:if="{{isLogin}}">
-    <image class="avatar" src="{{userInfo.avatar || '/images/tab-mine.png'}}" mode="aspectFill"/>
+    <image class="avatar" src="{{avatarUrl}}" mode="aspectFill"/>
     <view class="info"><text class="nickname">{{userInfo.real_name || userInfo.nickname || '用户'}}</text><text class="phone">{{userInfo.phone || '未绑定手机'}}</text></view>
   </view>
   <view class="user-card card login-card" wx:else bindtap="onLogin"><text>点击登录</text></view>

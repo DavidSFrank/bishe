@@ -3,6 +3,7 @@ const { get } = require('../../utils/request')
 const { normalizeImageUrl } = require('../../utils/image')
 
 const CATEGORY_EMOJI_FALLBACKS = ['🫀', '👨', '👩', '👴', '👶', '💪', '🧬', '🩺']
+const PACKAGE_LIST_FILTER_KEY = 'package_list_filter_intent'
 
 Page({
     data: {
@@ -55,7 +56,14 @@ Page({
 
     onCategoryTap(e) {
         const { id, name } = e.currentTarget.dataset
-        wx.navigateTo({ url: `/pages/packages/list?categoryId=${id}&categoryName=${name}` })
+        const categoryId = Number(id) || 0
+        wx.setStorageSync(PACKAGE_LIST_FILTER_KEY, {
+            categoryId,
+            categoryName: name || '',
+            from: 'index',
+            ts: Date.now()
+        })
+        wx.switchTab({ url: '/pages/packages/list' })
     },
 
     onPackageTap(e) {

@@ -1,16 +1,26 @@
 // pages/mine/index.js - 个人中心
 const { requireUserLogin, clearUserSession, get } = require('../../utils/request')
 const { consumeReturnUrl, navigateAfterLogin } = require('../../utils/user-page')
+const { normalizeImageUrl } = require('../../utils/image')
 
 Page({
     data: {
         userInfo: null,
-        isLogin: false
+        isLogin: false,
+        avatarUrl: '/images/tab-mine.png'
+    },
+
+    applyUserInfo(userInfo) {
+        this.setData({
+            userInfo,
+            isLogin: !!userInfo,
+            avatarUrl: normalizeImageUrl(userInfo && userInfo.avatar)
+        })
     },
 
     onShow() {
         const userInfo = wx.getStorageSync('userInfo')
-        this.setData({ userInfo, isLogin: !!userInfo })
+        this.applyUserInfo(userInfo)
         if (userInfo && wx.getStorageSync('token')) {
             this.refreshProfile()
         }
@@ -22,7 +32,7 @@ Page({
             const oldUserInfo = wx.getStorageSync('userInfo') || {}
             const nextUserInfo = { ...oldUserInfo, ...profile }
             wx.setStorageSync('userInfo', nextUserInfo)
-            this.setData({ userInfo: nextUserInfo, isLogin: true })
+            this.applyUserInfo(nextUserInfo)
         } catch (e) {}
     },
 
@@ -41,7 +51,7 @@ Page({
         clearUserSession()
         const app = getApp()
         app.globalData.userInfo = null
-        this.setData({ userInfo: null, isLogin: false })
+        this.applyUserInfo(null)
         wx.showToast({ title: '已退出登录', icon: 'none' })
     },
 

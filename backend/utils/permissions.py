@@ -11,6 +11,11 @@ class IsUser(BasePermission):
         return bool(request.user and getattr(request.user, 'role', None) == 'user')
 
 
+class IsAdminOrUser(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and getattr(request.user, 'role', None) in ['admin', 'user'])
+
+
 class IsAdminOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:

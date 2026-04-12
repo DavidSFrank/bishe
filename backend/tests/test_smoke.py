@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient
 from apps.users.models import User
 from apps.packages.models import Category, Package
@@ -79,6 +80,25 @@ class SmokeTests(TestCase):
         self.assertEqual(updated.status_code, 200)
         self.assertEqual(updated_body['data']['nickname'], '测试用户')
         self.assertTrue(updated_body['data']['profile_completed'])
+
+    def test_user_can_upload_avatar_and_update_profile(self):
+        user = User.objects.create(openid='wx-code-003-avatar')
+        token = self.client.post('/api/users/login/', {'code': user.openid}, format='json').json()['data']['token']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        file = SimpleUploadedFile('avatar.png', b'fake-image-bytes', content_type='image/png')
+        upload = self.client.post('/api/users/upload/', {'file': file})
+        upload_body = upload.json()
+
+        self.assertEqual(upload.status_code, 200)
+        self.assertEqual(upload_body['code'], 200)
+        self.assertIn('/media/uploads/', upload_body['data']['url'])
+
+        updated = self.client.put('/api/users/me/', {'avatar': upload_body['data']['url']}, format='json')
+        updated_body = updated.json()
+        self.assertEqual(updated.status_code, 200)
+        self.assertEqual(updated_body['code'], 200)
+        self.assertEqual(updated_body['data']['avatar'], upload_body['data']['url'])
 
     def test_user_can_cancel_own_pending_appointment(self):
         user = User.objects.create(openid='wx-code-004', real_name='王五', phone='13800138000', id_card='11010119900307321X')

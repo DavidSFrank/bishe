@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status
 from utils.jwt_auth import generate_token
 from utils.response import success, error
-from utils.permissions import IsAdmin, IsUser
+from utils.permissions import IsAdmin, IsUser, IsAdminOrUser
 from utils.viewsets import StandardModelViewSet
 from .models import User, Admin, Favorite
 from .serializers import UserSerializer, AdminSerializer, FavoriteSerializer, UserProfileSerializer, is_profile_completed
@@ -108,14 +108,16 @@ class AdminDashboardView(APIView):
 
 
 class UploadView(APIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdminOrUser]
 
     def post(self, request):
         file = request.FILES.get('file')
         if not file:
             return error('未上传文件', code=400)
         file_path = default_storage.save(f'uploads/{file.name}', file)
-        file_url = request.build_absolute_uri(settings.MEDIA_URL + file_path)
+        media_prefix = settings.MEDIA_URL.strip('/')
+        media_path = f'/{media_prefix}/{file_path.lstrip('/')}'
+        file_url = request.build_absolute_uri(media_path)
         return success({"url": file_url, "path": file_path})
 
 

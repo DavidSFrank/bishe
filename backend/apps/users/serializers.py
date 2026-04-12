@@ -23,6 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    avatar = serializers.CharField(required=False, allow_blank=True)
     profile_completed = serializers.SerializerMethodField(read_only=True)
 
     def get_profile_completed(self, obj):
@@ -42,6 +43,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         if value and not (value[-1].isdigit() or value[-1] == 'X'):
             raise serializers.ValidationError('身份证号格式不正确')
         return value
+
+    def validate_avatar(self, value):
+        return (value or '').strip()
 
     class Meta:
         model = User

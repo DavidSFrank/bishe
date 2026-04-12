@@ -4,4 +4,8 @@
 .label { display: block; font-size: 26rpx; color: #666; margin-bottom: 8rpx; }
 .input { background: #f7f7f7; border-radius: 8rpx; padding: 16rpx; }
 .picker { background: #f7f7f7; border-radius: 8rpx; padding: 16rpx; }
+.avatar-field { margin-bottom: 28rpx; }
+.avatar-row { display: flex; align-items: center; justify-content: space-between; }
+.avatar { width: 120rpx; height: 120rpx; border-radius: 50%; background: #f3f3f3; }
+.avatar-btn { margin: 0; }
 .primary-btn { margin-top: 20rpx; background: #2196F3; color: #fff; }

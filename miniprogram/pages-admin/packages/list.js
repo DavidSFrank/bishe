@@ -135,6 +135,21 @@ Page({
         }
     },
 
+    async onToggleHot(e) {
+        const id = e.currentTarget.dataset.id
+        const currentHot = Boolean(e.currentTarget.dataset.hot)
+        if (!id) {
+            return
+        }
+        try {
+            await updatePackage(id, { is_hot: !currentHot })
+            wx.showToast({ title: !currentHot ? '已设为热门' : '已取消热门', icon: 'success' })
+            this.loadData(true)
+        } catch (err) {
+            console.error('toggle package hot failed', err)
+        }
+    },
+
     onDelete(e) {
         const id = e.currentTarget.dataset.id
         if (!id) {

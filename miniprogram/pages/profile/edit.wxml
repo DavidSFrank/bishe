@@ -1,5 +1,14 @@
 <view class="profile-page">
   <view class="card">
+    <view class="field avatar-field">
+      <text class="label">头像</text>
+      <view class="avatar-row">
+        <image class="avatar" src="{{avatarPreview}}" mode="aspectFill"/>
+        <button class="avatar-btn" size="mini" bindtap="onChooseAvatar" loading="{{uploading}}" disabled="{{uploading}}">
+          {{uploading ? '上传中...' : '更换头像'}}
+        </button>
+      </view>
+    </view>
     <view class="field">
       <text class="label">昵称</text>
       <input class="input" value="{{form.nickname}}" data-field="nickname" bindinput="onInput" />

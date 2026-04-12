@@ -17,10 +17,11 @@
         <text class="name">{{item.name}}</text>
         <text class="price">{{item.price}}</text>
       </view>
-      <view class="meta">销量: {{item.sales_count}} | 状态: {{item.is_active ? '上架' : '下架'}}</view>
+      <view class="meta">销量: {{item.sales_count}} | 状态: {{item.is_active ? '上架' : '下架'}} | 热门: {{item.is_hot ? '是' : '否'}}</view>
       <view class="desc">{{item.description || '暂无描述'}}</view>
       <view class="item-actions">
         <button size="mini" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onEdit">编辑</button>
+        <button size="mini" type="primary" data-id="{{item.id}}" data-hot="{{item.is_hot}}" bindtap="onToggleHot">{{item.is_hot ? '取消热门' : '设为热门'}}</button>
         <button size="mini" type="warn" data-id="{{item.id}}" bindtap="onDelete">删除</button>
       </view>
     </view>

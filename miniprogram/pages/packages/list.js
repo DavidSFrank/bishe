@@ -2,6 +2,7 @@
 const { get } = require('../../utils/request')
 const { PACKAGE_TEXTS } = require('./constants')
 const { normalizeImageUrl } = require('../../utils/image')
+const PACKAGE_LIST_FILTER_KEY = 'package_list_filter_intent'
 
 Page({
     data: {
@@ -22,11 +23,32 @@ Page({
     },
 
     onShow() {
+        if (this.applyPendingFilterIntent()) {
+            this.loadCategories().then(() => this.loadPackages())
+            return
+        }
         if (this._loadedOnce) {
             this.loadCategories().then(() => this.loadPackages())
             return
         }
         this._loadedOnce = true
+    },
+
+    applyPendingFilterIntent() {
+        const intent = wx.getStorageSync(PACKAGE_LIST_FILTER_KEY)
+        if (!intent || typeof intent !== 'object') {
+            return false
+        }
+        wx.removeStorageSync(PACKAGE_LIST_FILTER_KEY)
+        const categoryId = Number(intent.categoryId || 0)
+        if (!categoryId) {
+            return false
+        }
+        this.setData({
+            currentCategory: categoryId,
+            keyword: ''
+        })
+        return true
     },
 
     async onPullDownRefresh() {

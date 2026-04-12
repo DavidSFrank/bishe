@@ -39,26 +39,26 @@
             {
                 "pagePath": "pages/index/index",
                 "text": "首页",
-                "iconPath": "images/tab-home.png",
-                "selectedIconPath": "images/tab-home-active.png"
+                "iconPath": "images/shouye-copy.png",
+                "selectedIconPath": "images/shouye-copy.png"
             },
             {
                 "pagePath": "pages/packages/list",
                 "text": "套餐",
-                "iconPath": "images/tab-package.png",
-                "selectedIconPath": "images/tab-package-active.png"
+                "iconPath": "images/taocan-copy.png",
+                "selectedIconPath": "images/taocan-copy.png"
             },
             {
                 "pagePath": "pages/appointment/list",
                 "text": "预约",
-                "iconPath": "images/tab-appointment.png",
-                "selectedIconPath": "images/tab-appointment-active.png"
+                "iconPath": "images/yuyue-copy.png",
+                "selectedIconPath": "images/yuyue-copy.png"
             },
             {
                 "pagePath": "pages/mine/index",
                 "text": "我的",
-                "iconPath": "images/tab-mine.png",
-                "selectedIconPath": "images/tab-mine-active.png"
+                "iconPath": "images/wode-copy-copy.png",
+                "selectedIconPath": "images/wode-copy-copy.png"
             }
         ]
     },

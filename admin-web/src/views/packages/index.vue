@@ -69,6 +69,9 @@
         <el-form-item label="价格">
           <el-input-number v-model="form.price" :min="0" style="width: 100%" />
         </el-form-item>
+        <el-form-item label="热门推荐">
+          <el-switch v-model="form.is_hot" />
+        </el-form-item>
         <el-form-item label="适用人群">
           <el-input v-model="form.suitable_for" />
         </el-form-item>
@@ -100,6 +103,7 @@ const form = ref({
   name: '',
   category: null,
   price: 0,
+  is_hot: false,
   suitable_for: '',
   description: ''
 })
@@ -136,7 +140,7 @@ const loadCategories = async () => {
 }
 
 const handleAdd = () => {
-  form.value = { name: '', category: null, price: 0, suitable_for: '', description: '' }
+  form.value = { name: '', category: null, price: 0, is_hot: false, suitable_for: '', description: '' }
   dialogVisible.value = true
 }
 
@@ -146,6 +150,7 @@ const handleEdit = (row) => {
     name: row.name || '',
     category: row.category?.id || null,
     price: Number(row.price || 0),
+    is_hot: Boolean(row.is_hot),
     suitable_for: row.suitable_for || '',
     description: row.description || ''
   }
@@ -164,6 +169,7 @@ const handleSubmit = async () => {
     name: form.value.name,
     category: form.value.category || null,
     price: form.value.price,
+    is_hot: Boolean(form.value.is_hot),
     suitable_for: form.value.suitable_for,
     description: form.value.description
   }
